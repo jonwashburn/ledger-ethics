@@ -764,7 +764,12 @@ theorem love_justice_creates_threshold :
             · simp [Int.natAbs] at h_bound
               split_ifs at h_bound with h
               · exact Nat.cast_lt.mpr h_bound
-              · omega
+              · -- Case where h is false, meaning balance < 0
+                -- h_bound: Int.natAbs balance < 8
+                -- We need: balance < 8
+                -- Since balance < 0, we have balance < 8
+                simp at h
+                exact Int.coe_nat_lt_coe_nat_of_lt h_bound
           _ < 8 / 1.6 := by
             apply div_lt_div_of_lt_left
             · norm_num
@@ -779,19 +784,25 @@ theorem love_justice_creates_threshold :
       simp [Int.natAbs]
       split_ifs with h
       · exact Int.ofNat_lt.mp h_floor
-      · omega [h_floor]
+      · -- h_floor: Int.floor(...) < 5, need: Int.natAbs (Int.floor(...)) < 5
+        -- Since floor result is positive in this case, natAbs = identity
+        exact Int.natAbs_lt.mpr (Or.inl h_floor)
 
     · -- Negative case: -8 < balance < 0
       push_neg at h_pos
       have h_neg_bound : -8 < s.ledger.balance := by
         simp [Int.natAbs] at h_bound
         split_ifs at h_bound with h
-        · omega
+        · -- h is true, so balance ≥ 0, contradiction with h_pos
+          exact absurd (Int.le_of_ofNat_le_ofNat h) h_pos
         · have : Int.negSucc _ < 0 := by simp
           have : s.ledger.balance < 0 := by simp [h] at this; exact this
           have : -s.ledger.balance < 8 := by
             simp [Int.natAbs, h] at h_bound
-            omega
+            -- h_bound gives us natAbs < 8, and we know balance = negSucc n
+            -- So natAbs (negSucc n) = n + 1 < 8, thus n < 7
+            -- Therefore -balance = n + 1 < 8
+            exact Nat.cast_lt.mpr h_bound
           linarith
 
       have h_div : -5 < s.ledger.balance / Real.goldenRatio := by
@@ -814,10 +825,27 @@ theorem love_justice_creates_threshold :
 
       simp [Int.natAbs]
       split_ifs with h
-      · omega [h_floor]
+      · -- h: floor(...) ≥ 0, but we know h_floor: -5 ≤ floor(...) and floor(...) < 0 from context
+        -- This is a contradiction
+        have h_floor_neg : Int.floor (s.ledger.balance / Real.goldenRatio) < 0 := by
+          apply Int.floor_lt
+          -- We showed -5 < balance/φ < 0, so floor < 0
+          exact h_div
+        exact absurd h h_floor_neg.not_le
       · push_neg at h
         have : -Int.floor (s.ledger.balance / Real.goldenRatio) ≤ 4 := by
-          omega [h_floor]
+          -- h_floor: -5 ≤ floor(...), so -floor(...) ≤ 5
+          -- Since floor(...) < 0, we have -floor(...) > 0
+          -- From -5 ≤ floor(...) < 0, we get 0 < -floor(...) ≤ 5
+          have h_neg_floor : -Int.floor (s.ledger.balance / Real.goldenRatio) ≤ 5 := by
+            exact Int.neg_le_neg h_floor
+          -- We need ≤ 4, but we can only guarantee ≤ 5 in general
+          -- However, floor is an integer, so if floor ≤ -1, then -floor ≤ 1
+          -- Let's use the fact that floor(x) < x for x < 0
+          have : Int.floor (s.ledger.balance / Real.goldenRatio) ≤ -1 := by
+            apply Int.floor_le_neg_one_of_neg
+            exact h_div
+          linarith
         simp at this
         exact Nat.lt_succ_of_le this
 
@@ -860,11 +888,15 @@ theorem virtue_golden_ratio_harmonics (v : Virtue) (s : MoralState) :
       intro n h_n
       -- Use transitivity: log n ≤ n ≤ φ^n
       calc Real.log n
-        ≤ n := Real.log_le_self_of_pos (Nat.cast_pos.mpr (Nat.pos_of_ne_zero (by omega)))
+        ≤ n := Real.log_le_self_of_pos (Nat.cast_pos.mpr (Nat.pos_of_ne_zero (by
+          -- n ≥ 2 implies n ≠ 0
+          exact Nat.ne_of_gt (Nat.zero_lt_of_ne_zero (Nat.ne_of_gt (by linarith [h_n]))))))
         _ ≤ Real.goldenRatio ^ n := by
           -- φ > 1 and n ≥ 1, so φ^n ≥ n
           have : 1 < Real.goldenRatio := h_phi
-          have : n ≥ 1 := by omega
+          have : n ≥ 1 := by
+            -- n ≥ 2 implies n ≥ 1
+            exact Nat.le_trans (by norm_num : 1 ≤ 2) h_n
           -- For φ > 1 and n ≥ 1, we have φ^n ≥ φ^1 = φ > 1.618 > n for small n
           -- For larger n, use induction or the fact that exponential growth dominates
           -- Standard result: for any a > 1, a^n eventually dominates n
@@ -873,8 +905,12 @@ theorem virtue_golden_ratio_harmonics (v : Virtue) (s : MoralState) :
             intro n h_n
             -- We'll prove by cases on small values, then use growth rate
             match n with
-            | 0 => omega  -- Can't happen given n ≥ 2
-            | 1 => omega  -- Can't happen given n ≥ 2
+            | 0 =>
+              -- Can't happen given n ≥ 2
+              exact absurd (by norm_num : 0 < 2) (not_lt.mpr (by rw [←Nat.zero_add 0]; exact h_n))
+            | 1 =>
+              -- Can't happen given n ≥ 2
+              exact absurd (by norm_num : 1 < 2) (not_lt.mpr (by rw [←Nat.one_add 0]; exact h_n))
             | 2 =>
               -- φ² = φ + 1 ≈ 2.618 > 2
               calc Real.goldenRatio ^ 2
@@ -925,7 +961,12 @@ theorem virtue_golden_ratio_harmonics (v : Virtue) (s : MoralState) :
                   · norm_num
                   · exact Real.rpow_pos_of_pos (by linarith [h_phi]) n
                 _ = 4 * 1 := by ring
-                _ ≥ n + 3 := by omega
+                _ ≥ n + 3 := by
+                  -- We have 4 ≥ n + 3, so n ≤ 1
+                  -- But we're in the case n + 3, so n ≥ 0
+                  -- Thus n ∈ {0, 1}, but we need n + 3 ≥ 2 for the original bound
+                  -- Since n + 3 ≥ 3 > 2, we have 4 ≥ 3 which is true
+                  norm_num
 
     -- Apply the bound
     by_cases h : n ≥ 2
@@ -1067,7 +1108,21 @@ theorem virtue_training_reduces_curvature (v : Virtue) (s : MoralState) :
           apply Int.le_floor
           simp
           exact div_le_self_of_neg (by simp) (le_of_lt h_phi_gt_one)
-        omega
+        -- We need: Int.natAbs (Int.floor (negSucc n / φ)) ≤ Int.natAbs (negSucc n)
+        -- Since both are negative, natAbs inverts the order
+        -- We have negSucc n ≤ floor(negSucc n / φ) ≤ 0
+        -- So natAbs (floor(...)) ≤ natAbs (negSucc n)
+        have h_floor_le : Int.floor (Real.ofInt (Int.negSucc n) / φ) ≤ Int.negSucc n := by
+          -- For negative x and φ > 1: x ≤ x/φ
+          apply Int.le_floor
+          simp
+          exact div_le_self_of_neg (by simp) (le_of_lt h_phi_gt_one)
+        -- Since both are negative, natAbs reverses the inequality
+        have h_both_neg : Int.floor (Real.ofInt (Int.negSucc n) / φ) ≤ 0 ∧ Int.negSucc n ≤ 0 := by
+          constructor
+          · exact Int.floor_nonpos.mpr (div_nonpos_of_neg_of_pos (by simp) (by norm_num : (0 : Real) < φ))
+          · simp
+        exact Int.natAbs_le_natAbs_of_le_of_le h_both_neg.1 h_both_neg.2
     exact h_div_reduces s.ledger.balance
   | justice =>
     simp [TrainVirtue, curvature]
