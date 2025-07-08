@@ -23,6 +23,7 @@ import foundation.Foundations.DualBalance
 import foundation.Foundations.DiscreteTime
 import foundation.Foundations.PositiveCost
 import Helpers.NumericalTactics
+import Recognition.Util.Arith
 
 namespace RecognitionScience.Ethics
 
@@ -260,7 +261,10 @@ def recordExtended (s : ExtendedLedgerState) (t : ExtendedTransaction)
         have h_j_ge : j ≥ s.entries.length := Nat.not_lt.mp h_j_old
         -- j is either the debit or credit entry
         have h_j_idx : j = s.entries.length ∨ j = s.entries.length + 1 := by
-          omega
+          -- j ≥ entries.length and j < entries.length + 2, so j ∈ {entries.length, entries.length + 1}
+          have h_upper : j < s.entries.length + 2 := h_j_new
+          have h_lower : j ≥ s.entries.length := h_j_ge
+          interval_cases j
         -- Old entries come before new entries in time
         have h_old_time : (s.entries.get ⟨i, h_i_old⟩).timestamp.value ≤ s.currentTime.value := by
           -- All old entries must be ≤ current time
@@ -285,9 +289,21 @@ def recordExtended (s : ExtendedLedgerState) (t : ExtendedTransaction)
       have h_j_new : j ≥ s.entries.length := Nat.le_trans h_i_new (Nat.le_of_lt h_lt)
       -- Both are among the two new entries
       have h_i_idx : i = s.entries.length ∨ i = s.entries.length + 1 := by
-        omega
-      have h_j_idx : j = s.entries.length ∨ j = s.entries.length + 1 := by
-        omega
+        -- i ≥ entries.length and i < entries.length + 2, so i ∈ {entries.length, entries.length + 1}
+        have h_upper : i < s.entries.length + 2 := by
+          rw [List.length_append] at h_i
+          simp at h_i
+          exact h_i
+        have h_lower : i ≥ s.entries.length := h_i_new
+        interval_cases i
+              have h_j_idx : j = s.entries.length ∨ j = s.entries.length + 1 := by
+          -- j ≥ entries.length and j < entries.length + 2, so j ∈ {entries.length, entries.length + 1}
+          have h_upper : j < s.entries.length + 2 := by
+            rw [List.length_append] at h_j
+            simp at h_j
+            exact h_j
+          have h_lower : j ≥ s.entries.length := h_j_new
+          interval_cases j
       -- Since i < j and both are in {len, len+1}, must have i = len and j = len+1
       have : i = s.entries.length ∧ j = s.entries.length + 1 := by
         cases h_i_idx with
@@ -295,7 +311,10 @@ def recordExtended (s : ExtendedLedgerState) (t : ExtendedTransaction)
           | inl h_j => exfalso; rw [h_i, h_j] at h_lt; exact Nat.lt_irrefl _ h_lt
           | inr h_j => exact ⟨h_i, h_j⟩
         | inr h_i => cases h_j_idx with
-          | inl h_j => exfalso; rw [h_i, h_j] at h_lt; omega
+          | inl h_j => exfalso; rw [h_i, h_j] at h_lt;
+            -- h_i: i = entries.length + 1, h_j: j = entries.length
+            -- h_lt: i < j, but entries.length + 1 < entries.length is impossible
+            exact Nat.not_lt.mpr (Nat.le_succ _) h_lt
           | inr h_j => exfalso; rw [h_i, h_j] at h_lt; exact Nat.lt_irrefl _ h_lt
       obtain ⟨h_i_eq, h_j_eq⟩ := this
       -- Both entries have the same timestamp by construction
@@ -312,7 +331,10 @@ def recordExtended (s : ExtendedLedgerState) (t : ExtendedTransaction)
       -- Old entry: was ≤ old current time, new current time is ≥ old
       have h_old_bound := s.timestamps_bounded e h_old
       simp
-      omega
+      -- Old entries were ≤ old current time, new current time ≥ old current time
+      have h_time_inc : s.currentTime.value ≤ max s.currentTime.value (t.debit.timestamp.value + 1) := by
+        exact Nat.le_max_left _ _
+      exact Nat.le_trans h_old_bound h_time_inc
     | inr h_new =>
       -- New entry: either debit or credit
       simp [List.mem_cons] at h_new
@@ -320,14 +342,29 @@ def recordExtended (s : ExtendedLedgerState) (t : ExtendedTransaction)
       | inl h_debit =>
         rw [h_debit]
         simp
-        omega
+        -- t.debit.timestamp ≤ max(old_time, t.debit.timestamp + 1)
+        have h_time_bound : t.debit.timestamp.value ≤ max s.currentTime.value (t.debit.timestamp.value + 1) := by
+          exact Nat.le_max_right _ _
+        -- Since max(a, b+1) ≥ b, we have the bound
+        have h_max_ge : t.debit.timestamp.value ≤ t.debit.timestamp.value + 1 := by
+          exact Nat.le_succ _
+        have h_combine : t.debit.timestamp.value ≤ max s.currentTime.value (t.debit.timestamp.value + 1) := by
+          exact Nat.le_trans h_max_ge (Nat.le_max_right _ _)
+        exact h_combine
       | inr h_credit =>
         simp [List.mem_singleton] at h_credit
         rw [h_credit]
         simp
         -- t.credit.timestamp = t.debit.timestamp by simultaneous
         rw [← t.simultaneous]
-        omega
+        -- Same bound as for debit
+        have h_time_bound : t.debit.timestamp.value ≤ max s.currentTime.value (t.debit.timestamp.value + 1) := by
+          exact Nat.le_max_right _ _
+        have h_max_ge : t.debit.timestamp.value ≤ t.debit.timestamp.value + 1 := by
+          exact Nat.le_succ _
+        have h_combine : t.debit.timestamp.value ≤ max s.currentTime.value (t.debit.timestamp.value + 1) := by
+          exact Nat.le_trans h_max_ge (Nat.le_max_right _ _)
+        exact h_combine
 
 /-- Extended transactions preserve balance when starting from balance -/
 theorem extended_transaction_preserves_balance (s : ExtendedLedgerState) (t : ExtendedTransaction)
@@ -411,7 +448,12 @@ theorem extended_simulates_simple :
       split_ifs with h
       · -- Both entries have timestamp 0
         simp at h_i h_j
-        have : i < 2 ∧ j < 2 := by omega
+        have : i < 2 ∧ j < 2 := by
+          -- If h is true, then initial_entries has 2 elements
+          -- So both i and j must be < 2
+          constructor
+          · exact h_i
+          · exact h_j
         simp
       · -- No entries
         simp at h_i
