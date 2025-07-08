@@ -15,6 +15,7 @@
 import Ethics.Curvature
 import Foundations.EightBeat
 import Foundations.GoldenRatio
+import Recognition.Util.Arith
 
 namespace RecognitionScience.Ethics
 
@@ -200,17 +201,26 @@ theorem forgiveness_prevents_collapse (creditor debtor : MoralState) (threshold 
       | inl h_lt =>
         -- n < threshold contradicts h_high_debt
         simp [Int.ofNat] at h_high_debt
-        omega
+        -- h_high_debt: n > threshold, h_lt: n < threshold, contradiction
+        exact absurd h_lt (not_lt.mpr (Int.le_of_ofNat_le_ofNat h_high_debt))
       | inr h_ge =>
         -- n ≥ threshold, so transfer reduces to threshold
         simp [Int.ofNat]
-        omega
+        -- We want to show n - (n - threshold) ≤ threshold
+        have h_sub : n - (n - threshold) = threshold := by
+          simp [Nat.sub_sub_self h_ge]
+        rw [←Int.ofNat_sub h_ge]
+        simp [Int.ofNat, h_sub]
     | negSucc n =>
       -- Negative curvature case
       simp [Int.natAbs] at *
       simp [Int.ofNat] at h_high_debt
       -- Negative > positive is impossible
-      omega
+      -- h_high_debt states that negSucc n > threshold (positive)
+      -- But negSucc n is negative, so this is impossible
+      have h_neg : Int.negSucc n < 0 := Int.negSucc_lt_zero n
+      have h_pos : (0 : Int) ≤ Int.ofNat threshold := Int.ofNat_nonneg threshold
+      exact absurd (Int.lt_trans h_neg (Int.le_trans h_pos h_high_debt)) (Int.lt_irrefl _)
   · -- Total curvature conserved
     ring
 
@@ -446,10 +456,17 @@ theorem gratitude_clears_phantom_debt (r g : MoralState) :
     cases h : κ r with
     | ofNat n =>
       simp [Int.natAbs]
-      omega  -- |n - acknowledgment| ≤ |n| for acknowledgment ≥ 0
+      -- |n - acknowledgment| ≤ |n| for acknowledgment ≥ 0
+      have h_ack_pos : 0 ≤ acknowledgment := by
+        simp [acknowledgment]
+        exact Nat.zero_le _
+      exact Int.natAbs_sub_le n acknowledgment h_ack_pos
     | negSucc n =>
       simp [Int.natAbs]
-      omega  -- |-(n+1) - acknowledgment| = n+1+acknowledgment ≥ n+1
+      -- |-(n+1) - acknowledgment| = n+1+acknowledgment ≥ n+1
+      have h_ack_nonneg : 0 ≤ acknowledgment := Nat.zero_le _
+      simp [Int.natAbs]
+      exact Nat.le_add_right (n + 1) acknowledgment
 
 /-- Creativity: Negative entropy through novel patterns -/
 def CreativeAct (s : MoralState) : Prop :=
@@ -482,11 +499,22 @@ theorem creativity_generates_negative_entropy (s : MoralState) :
       cases h : κ s with
       | ofNat n =>
         simp [Int.natAbs, min_def] at h_joy
-        omega
+        -- joy s > 0 means min(n, energy.cost) < energy.cost
+        -- Since joy = energy.cost - κ s > 0, we have κ s < energy.cost
+        -- For κ s = n, this means n < energy.cost, so κ s' = 0 < n = κ s
+        have h_pos_joy : Real.ofNat (joy s) > 0 := Nat.cast_pos.mpr h_joy
+        simp [joy] at h_pos_joy
+        have h_n_lt : (n : Real) < s.energy.cost := by
+          rw [min_def] at h_pos_joy
+          split_ifs at h_pos_joy with h_min
+          · linarith
+          · simp at h_pos_joy
+        exact Nat.cast_lt.mp h_n_lt
       | negSucc n =>
         simp [Int.natAbs, min_def] at h_joy
         simp
-        omega
+        -- For negative κ s, we have κ s' = 0 and κ s < 0, so κ s' > κ s
+        exact Int.zero_gt_negSucc n
     · simp  -- Energy increased
   · rfl  -- Energy formula matches
 
@@ -550,7 +578,7 @@ theorem patience_enables_complex_resolution (s : MoralState) (cycles : Nat) :
   · simp [curvature]
   · -- Valid transition over extended time
     exact {
-      duration := ⟨cycles * 8, by omega⟩,
+      duration := ⟨cycles * 8, Nat.mul_pos (Nat.zero_lt_of_lt h_cycles) (by norm_num : 0 < 8)⟩,
       energyCost := by
         simp [PatientWait, resolution]
         -- After waiting, energy decreases by at most half
@@ -588,7 +616,10 @@ theorem patience_enables_complex_resolution (s : MoralState) (cycles : Nat) :
             have h_log_bound : Real.log (Real.ofNat cycles) ≤ (Real.ofNat cycles) / 2 := by
               -- Standard calculus result: log x ≤ x/2 for x ≥ 3
               -- More precisely: log x ≤ x - 1 < x/2 for x > 2
-              have h_cycles_ge_3 : cycles ≥ 3 := by omega [h, h_cycles]
+              have h_cycles_ge_3 : cycles ≥ 3 := by
+                -- h: ¬cycles ≤ 2, h_cycles: cycles > 1
+                -- So cycles > 2, hence cycles ≥ 3
+                exact Nat.le_sub_of_add_le (Nat.succ_le_of_lt (Nat.lt_of_not_ge h))
               have : Real.ofNat cycles ≥ 3 := by simp; exact h_cycles_ge_3
               -- Use log x ≤ x - 1 for x ≥ 1
               calc Real.log (Real.ofNat cycles)
