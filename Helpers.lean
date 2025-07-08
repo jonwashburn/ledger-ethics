@@ -118,7 +118,37 @@ lemma discrete_mean_approximation (l : List ℝ) (h_nonempty : l ≠ []) :
   |before_mean - after_mean| ≤ 1 := by
   -- Floor operations can shift each element by at most 1
   -- So the mean can shift by at most 1
-  sorry
+  simp [before_mean, after_mean, after_discrete]
+  have h_bound : ∀ x : ℝ, |x - Int.floor x| ≤ 1 := by
+    intro x
+    have h_floor_le : (Int.floor x : ℝ) ≤ x := Int.floor_le x
+    have h_lt_floor_add_one : x < Int.floor x + 1 := Int.lt_floor_add_one x
+    rw [abs_sub_le_iff]
+    constructor
+    · linarith
+    · linarith
+  -- The difference in means is bounded by the maximum difference in elements
+  have h_length_pos : (0 : ℝ) < l.length := by
+    simp [Nat.cast_pos]
+    exact List.length_pos_of_ne_nil h_nonempty
+  -- Each element's contribution to the mean difference is bounded by 1/length
+  have h_mean_bound : |before_mean - after_mean| ≤ l.length / l.length := by
+    -- Sum of individual differences ≤ n * 1, so mean difference ≤ n/n = 1
+    have h_sum_bound : |(l.map (fun x => x - Int.floor x)).sum| ≤ l.length := by
+      calc |(l.map (fun x => x - Int.floor x)).sum|
+        ≤ (l.map (fun x => |x - Int.floor x|)).sum := by exact abs_sum_le_sum_abs _
+        _ ≤ (l.map (fun _ => (1 : ℝ))).sum := by
+          apply List.sum_le_sum
+          intro x h_in
+          simp at h_in
+          obtain ⟨y, h_y_in, h_eq⟩ := h_in
+          rw [←h_eq]
+          exact h_bound y
+        _ = l.length := by simp
+    rw [div_sub_div_eq_sub_div]
+    exact div_le_iff_le_mul_right h_length_pos |>.mpr h_sum_bound
+  rw [div_self (ne_of_gt h_length_pos)] at h_mean_bound
+  exact h_mean_bound
 
 /-- Helper lemma: small mean variance reduction -/
 lemma small_mean_variance_reduction (states : List MoralState) :
