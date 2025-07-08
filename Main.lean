@@ -253,10 +253,10 @@ theorem virtue_training_reduces_curvature (v : Virtue) (s : MoralState) :
       cases h_bal : s.ledger.balance with
       | ofNat n =>
         simp
-        omega
+        linarith
       | negSucc n =>
         simp
-        omega
+        linarith
     · -- s.ledger.balance ≤ 10, no change
       simp
   | wisdom =>
@@ -401,10 +401,10 @@ theorem moral_realism (s₁ s₂ : MoralState) :
     -- Both negative: higher (closer to 0) is better
     right
     simp [is_morally_better_than]
-    have h₁_neg : κ s₁ < 0 := by omega
-    have h₂_neg : κ s₂ < 0 := by omega
+    have h₁_neg : κ s₁ < 0 := by linarith
+    have h₂_neg : κ s₂ < 0 := by linarith
     simp [Int.natAbs_of_neg h₁_neg, Int.natAbs_of_neg h₂_neg]
-    omega
+    linarith
 
 /-- Virtue training collective improvement -/
 theorem virtue_training_collective_improvement
