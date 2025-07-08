@@ -109,10 +109,10 @@ lemma discrete_abs_sum_convexity (l : List ℤ) (mean : ℤ)
       simp [h]
       -- |x - mean| ≤ |x - mean + 1| + 1
       -- This holds because |a| ≤ |a + 1| + 1 for any integer a ≥ 0
-      have : x - mean > 0 := by omega
+      have : x - mean > 0 := h
       have : natAbs (x - mean) = Int.natAbs (x - mean) := rfl
       have : natAbs (x - mean + 1) = Int.natAbs (x - mean + 1) := rfl
-      omega
+      linarith
     · -- Case x ≤ mean: subtracting 1 might decrease absolute value
       simp [h]
       -- |x - mean| ≤ |x - mean - 1| + 1
@@ -123,14 +123,14 @@ lemma discrete_abs_sum_convexity (l : List ℤ) (mean : ℤ)
           simp [natAbs]
           by_cases h' : n = 0
           · simp [h']
-          · have : n ≥ 1 := by omega
+          · have : n ≥ 1 := Nat.one_le_iff_ne_zero.mpr h'
             simp [Int.natAbs]
-            omega
+            linarith
         · -- x - mean = -(n+1) (negative)
           simp [natAbs, Int.natAbs]
           -- |-(n+1)| ≤ |-(n+1) - 1| + 1
           -- n+1 ≤ |-(n+2)| + 1 = n+2 + 1
-          omega
+          linarith
       exact this
 
   -- Sum over all elements

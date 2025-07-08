@@ -200,17 +200,17 @@ theorem forgiveness_prevents_collapse (creditor debtor : MoralState) (threshold 
       | inl h_lt =>
         -- n < threshold contradicts h_high_debt
         simp [Int.ofNat] at h_high_debt
-        omega
+        linarith
       | inr h_ge =>
         -- n ≥ threshold, so transfer reduces to threshold
         simp [Int.ofNat]
-        omega
+        linarith
     | negSucc n =>
       -- Negative curvature case
       simp [Int.natAbs] at *
       simp [Int.ofNat] at h_high_debt
       -- Negative > positive is impossible
-      omega
+      linarith
   · -- Total curvature conserved
     ring
 
@@ -446,10 +446,10 @@ theorem gratitude_clears_phantom_debt (r g : MoralState) :
     cases h : κ r with
     | ofNat n =>
       simp [Int.natAbs]
-      omega  -- |n - acknowledgment| ≤ |n| for acknowledgment ≥ 0
+      linarith  -- |n - acknowledgment| ≤ |n| for acknowledgment ≥ 0
     | negSucc n =>
       simp [Int.natAbs]
-      omega  -- |-(n+1) - acknowledgment| = n+1+acknowledgment ≥ n+1
+      linarith  -- |-(n+1) - acknowledgment| = n+1+acknowledgment ≥ n+1
 
 /-- Creativity: Negative entropy through novel patterns -/
 def CreativeAct (s : MoralState) : Prop :=
@@ -482,11 +482,11 @@ theorem creativity_generates_negative_entropy (s : MoralState) :
       cases h : κ s with
       | ofNat n =>
         simp [Int.natAbs, min_def] at h_joy
-        omega
+        linarith
       | negSucc n =>
         simp [Int.natAbs, min_def] at h_joy
         simp
-        omega
+        linarith
     · simp  -- Energy increased
   · rfl  -- Energy formula matches
 
@@ -550,7 +550,7 @@ theorem patience_enables_complex_resolution (s : MoralState) (cycles : Nat) :
   · simp [curvature]
   · -- Valid transition over extended time
     exact {
-      duration := ⟨cycles * 8, by omega⟩,
+      duration := ⟨cycles * 8, by linarith⟩,
       energyCost := by
         simp [PatientWait, resolution]
         -- After waiting, energy decreases by at most half
@@ -588,7 +588,7 @@ theorem patience_enables_complex_resolution (s : MoralState) (cycles : Nat) :
             have h_log_bound : Real.log (Real.ofNat cycles) ≤ (Real.ofNat cycles) / 2 := by
               -- Standard calculus result: log x ≤ x/2 for x ≥ 3
               -- More precisely: log x ≤ x - 1 < x/2 for x > 2
-              have h_cycles_ge_3 : cycles ≥ 3 := by omega [h, h_cycles]
+              have h_cycles_ge_3 : cycles ≥ 3 := by linarith [h, h_cycles]
               have : Real.ofNat cycles ≥ 3 := by simp; exact h_cycles_ge_3
               -- Use log x ≤ x - 1 for x ≥ 1
               calc Real.log (Real.ofNat cycles)
@@ -733,7 +733,7 @@ theorem love_justice_creates_threshold :
             · simp [Int.natAbs] at h_bound
               split_ifs at h_bound with h
               · exact Nat.cast_lt.mpr h_bound
-              · omega
+              · linarith
           _ < 8 / 1.6 := by
             apply div_lt_div_of_lt_left
             · norm_num
@@ -748,19 +748,19 @@ theorem love_justice_creates_threshold :
       simp [Int.natAbs]
       split_ifs with h
       · exact Int.ofNat_lt.mp h_floor
-      · omega [h_floor]
+      · linarith [h_floor]
 
     · -- Negative case: -8 < balance < 0
       push_neg at h_pos
       have h_neg_bound : -8 < s.ledger.balance := by
         simp [Int.natAbs] at h_bound
         split_ifs at h_bound with h
-        · omega
+        · linarith
         · have : Int.negSucc _ < 0 := by simp
           have : s.ledger.balance < 0 := by simp [h] at this; exact this
           have : -s.ledger.balance < 8 := by
             simp [Int.natAbs, h] at h_bound
-            omega
+            linarith
           linarith
 
       have h_div : -5 < s.ledger.balance / Real.goldenRatio := by
@@ -783,10 +783,10 @@ theorem love_justice_creates_threshold :
 
       simp [Int.natAbs]
       split_ifs with h
-      · omega [h_floor]
+      · linarith [h_floor]
       · push_neg at h
         have : -Int.floor (s.ledger.balance / Real.goldenRatio) ≤ 4 := by
-          omega [h_floor]
+          linarith [h_floor]
         simp at this
         exact Nat.lt_succ_of_le this
 
@@ -829,11 +829,11 @@ theorem virtue_golden_ratio_harmonics (v : Virtue) (s : MoralState) :
       intro n h_n
       -- Use transitivity: log n ≤ n ≤ φ^n
       calc Real.log n
-        ≤ n := Real.log_le_self_of_pos (Nat.cast_pos.mpr (Nat.pos_of_ne_zero (by omega)))
+        ≤ n := Real.log_le_self_of_pos (Nat.cast_pos.mpr (Nat.pos_of_ne_zero (by linarith)))
         _ ≤ Real.goldenRatio ^ n := by
           -- φ > 1 and n ≥ 1, so φ^n ≥ n
           have : 1 < Real.goldenRatio := h_phi
-          have : n ≥ 1 := by omega
+          have : n ≥ 1 := by linarith
           -- For φ > 1 and n ≥ 1, we have φ^n ≥ φ^1 = φ > 1.618 > n for small n
           -- For larger n, use induction or the fact that exponential growth dominates
           -- Standard result: for any a > 1, a^n eventually dominates n
@@ -842,8 +842,8 @@ theorem virtue_golden_ratio_harmonics (v : Virtue) (s : MoralState) :
             intro n h_n
             -- We'll prove by cases on small values, then use growth rate
             match n with
-            | 0 => omega  -- Can't happen given n ≥ 2
-            | 1 => omega  -- Can't happen given n ≥ 2
+            | 0 => contradiction  -- Can't happen given n ≥ 2
+            | 1 => contradiction  -- Can't happen given n ≥ 2
             | 2 =>
               -- φ² = φ + 1 ≈ 2.618 > 2
               calc Real.goldenRatio ^ 2
@@ -894,7 +894,7 @@ theorem virtue_golden_ratio_harmonics (v : Virtue) (s : MoralState) :
                   · norm_num
                   · exact Real.rpow_pos_of_pos (by linarith [h_phi]) n
                 _ = 4 * 1 := by ring
-                _ ≥ n + 3 := by omega
+                _ ≥ n + 3 := by linarith
 
     -- Apply the bound
     by_cases h : n ≥ 2
@@ -1036,7 +1036,7 @@ theorem virtue_training_reduces_curvature (v : Virtue) (s : MoralState) :
           apply Int.le_floor
           simp
           exact div_le_self_of_neg (by simp) (le_of_lt h_phi_gt_one)
-        omega
+        linarith
     exact h_div_reduces s.ledger.balance
   | justice =>
     simp [TrainVirtue, curvature]
