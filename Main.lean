@@ -18,7 +18,8 @@ import Ethics.Applications
 import Ethics.Helpers  -- Add this import
 import Ethics.DiscreteHelpers  -- Add discrete helpers
 import Recognition.Util.List
-import RecognitionScience
+import Foundation.EightBeat
+import Foundation.GoldenRatio
 import Foundation.Helpers.InfoTheory
 import Helpers.ListPartition
 import Mathlib.Data.Real.Basic

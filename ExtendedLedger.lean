@@ -19,7 +19,9 @@
   Recognition Science Institute
 -/
 
-import RecognitionScience
+import foundation.Foundations.DualBalance
+import foundation.Foundations.DiscreteTime
+import foundation.Foundations.PositiveCost
 import Helpers.NumericalTactics
 
 namespace RecognitionScience.Ethics

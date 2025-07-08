@@ -9,12 +9,12 @@
 -/
 
 -- Import all ethics submodules
-import Ethics.Curvature
-import Ethics.Virtue
-import Ethics.Measurement
-import Ethics.EmpiricalData
-import Ethics.Applications
-import Ethics.Main
+import ethics.Curvature
+import ethics.Virtue
+import ethics.Measurement
+import ethics.EmpiricalData
+import ethics.Applications
+import ethics.Main
 
 namespace RecognitionScience.Ethics
 
