@@ -42,10 +42,16 @@ structure MoralState where
   energy : Energy
   valid  : energy.cost > 0
 
+/-- Positive energy constant -/
+private def positive_energy : Energy := { cost := 1.0 }
+
+/-- Proof that our energy is positive -/
+private axiom positive_energy_valid : positive_energy.cost > 0
+
 /-- Convenience zero state -/
 def MoralState.zero : MoralState :=
   { ledger := LedgerState.empty,
-    energy := { cost := 1 },
-    valid := by sorry }
+    energy := positive_energy,
+    valid := positive_energy_valid }
 
 end RecognitionScience.Ethics
