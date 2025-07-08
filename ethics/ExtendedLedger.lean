@@ -258,7 +258,7 @@ def recordExtended (s : ExtendedLedgerState) (t : ExtendedTransaction)
         have h_j_ge : j ≥ s.entries.length := Nat.not_lt.mp h_j_old
         -- j is either the debit or credit entry
         have h_j_idx : j = s.entries.length ∨ j = s.entries.length + 1 := by
-          omega
+          linarith
         -- Old entries come before new entries in time
         have h_old_time : (s.entries.get ⟨i, h_i_old⟩).timestamp.value ≤ s.currentTime.value := by
           -- All old entries must be ≤ current time
@@ -283,9 +283,9 @@ def recordExtended (s : ExtendedLedgerState) (t : ExtendedTransaction)
       have h_j_new : j ≥ s.entries.length := Nat.le_trans h_i_new (Nat.le_of_lt h_lt)
       -- Both are among the two new entries
       have h_i_idx : i = s.entries.length ∨ i = s.entries.length + 1 := by
-        omega
+        linarith
       have h_j_idx : j = s.entries.length ∨ j = s.entries.length + 1 := by
-        omega
+        linarith
       -- Since i < j and both are in {len, len+1}, must have i = len and j = len+1
       have : i = s.entries.length ∧ j = s.entries.length + 1 := by
         cases h_i_idx with
@@ -293,7 +293,7 @@ def recordExtended (s : ExtendedLedgerState) (t : ExtendedTransaction)
           | inl h_j => exfalso; rw [h_i, h_j] at h_lt; exact Nat.lt_irrefl _ h_lt
           | inr h_j => exact ⟨h_i, h_j⟩
         | inr h_i => cases h_j_idx with
-          | inl h_j => exfalso; rw [h_i, h_j] at h_lt; omega
+          | inl h_j => exfalso; rw [h_i, h_j] at h_lt; linarith
           | inr h_j => exfalso; rw [h_i, h_j] at h_lt; exact Nat.lt_irrefl _ h_lt
       obtain ⟨h_i_eq, h_j_eq⟩ := this
       -- Both entries have the same timestamp by construction
@@ -310,7 +310,7 @@ def recordExtended (s : ExtendedLedgerState) (t : ExtendedTransaction)
       -- Old entry: was ≤ old current time, new current time is ≥ old
       have h_old_bound := s.timestamps_bounded e h_old
       simp
-      omega
+      linarith
     | inr h_new =>
       -- New entry: either debit or credit
       simp [List.mem_cons] at h_new
@@ -318,14 +318,14 @@ def recordExtended (s : ExtendedLedgerState) (t : ExtendedTransaction)
       | inl h_debit =>
         rw [h_debit]
         simp
-        omega
+        linarith
       | inr h_credit =>
         simp [List.mem_singleton] at h_credit
         rw [h_credit]
         simp
         -- t.credit.timestamp = t.debit.timestamp by simultaneous
         rw [← t.simultaneous]
-        omega
+        linarith
 
 /-- Extended transactions preserve balance when starting from balance -/
 theorem extended_transaction_preserves_balance (s : ExtendedLedgerState) (t : ExtendedTransaction)
@@ -409,7 +409,7 @@ theorem extended_simulates_simple :
       split_ifs with h
       · -- Both entries have timestamp 0
         simp at h_i h_j
-        have : i < 2 ∧ j < 2 := by omega
+        have : i < 2 ∧ j < 2 := by linarith
         simp
       · -- No entries
         simp at h_i
