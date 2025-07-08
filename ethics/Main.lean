@@ -65,14 +65,14 @@ lemma Int.lt_of_natAbs_lt_natAbs {a b : Int} (h : Int.natAbs a < Int.natAbs b) :
       right
       simp [ha, hb]
       simp [Int.natAbs] at h
-      omega
+      linarith
   | negSucc n =>
     cases hb : b with
     | ofNat m =>
       -- a < 0, b ≥ 0: clearly a < b
       left
       simp [ha, hb]
-      omega
+      linarith
     | negSucc m =>
       -- Both negative: |a| = n + 1, |b| = m + 1
       -- n + 1 < m + 1 means n < m, so -n - 1 > -m - 1, i.e., a > b
@@ -80,7 +80,7 @@ lemma Int.lt_of_natAbs_lt_natAbs {a b : Int} (h : Int.natAbs a < Int.natAbs b) :
       right
       simp [ha, hb] at h ⊢
       simp [Int.natAbs] at h
-      omega
+      linarith
 
 /-- Helper lemma: absolute value comparison -/
 lemma Int.natAbs_lt_natAbs : ∀ {a b : Int}, (a < b ∧ 0 ≤ b) ∨ (a < b ∧ b < 0 ∧ 0 ≤ a) ∨ (-b < a ∧ a < 0) ↔ Int.natAbs a < Int.natAbs b := by
@@ -90,7 +90,7 @@ lemma Int.natAbs_lt_natAbs : ∀ {a b : Int}, (a < b ∧ 0 ≤ b) ∨ (a < b ∧
     cases h with
     | inl h1 =>
       -- a < b ∧ 0 ≤ b
-      have : 0 ≤ a ∨ a < 0 := by omega
+      have : 0 ≤ a ∨ a < 0 := by linarith
       cases this with
       | inl ha =>
         -- 0 ≤ a < b, so |a| = a < b = |b|
@@ -100,31 +100,31 @@ lemma Int.natAbs_lt_natAbs : ∀ {a b : Int}, (a < b ∧ 0 ≤ b) ∨ (a < b ∧
         -- a < 0 < b, so |a| = -a and |b| = b
         -- Need to show -a < b, which follows from a < b and a < 0
         simp [Int.natAbs_of_neg ha, Int.natAbs_of_nonneg h1.2]
-        have : -a < b := by omega
+        have : -a < b := by linarith
         exact Int.ofNat_lt.mp this
     | inr h2 =>
       cases h2 with
       | inl h2 =>
         -- a < b ∧ b < 0 ∧ 0 ≤ a
         -- This means 0 ≤ a < b < 0, which is impossible
-        omega
+        linarith
       | inr h3 =>
         -- -b < a ∧ a < 0
         -- So b < 0 (else -b < 0 < a contradicts a < 0)
         have hb : b < 0 := by
           by_contra h
           push_neg at h
-          have : -b ≤ 0 := by omega
-          omega
+          have : -b ≤ 0 := by linarith
+          linarith
         -- |a| = -a, |b| = -b, and we have -b < a < 0
         -- So |b| = -b < a < 0, thus |b| < -a = |a|... wait, that's backwards
         -- Actually: -b < a means |b| < -a = |a|
         simp [Int.natAbs_of_neg h3.2, Int.natAbs_of_neg hb]
-        have : -a < -b := by omega
+        have : -a < -b := by linarith
         exact Int.ofNat_lt.mp this
   · intro h
     -- We have |a| < |b| and want to derive one of the three cases
-    have : (0 ≤ a ∨ a < 0) ∧ (0 ≤ b ∨ b < 0) := by omega
+    have : (0 ≤ a ∨ a < 0) ∧ (0 ≤ b ∨ b < 0) := by linarith
     cases this.1 with
     | inl ha =>
       cases this.2 with
@@ -141,7 +141,7 @@ lemma Int.natAbs_lt_natAbs : ∀ {a b : Int}, (a < b ∧ 0 ≤ b) ∨ (a < b ∧
         right; left
         simp [Int.natAbs_of_nonneg ha, Int.natAbs_of_neg hb] at h
         have : a < -b := Int.ofNat_lt.mpr h
-        exact ⟨by omega, hb, ha⟩
+        exact ⟨by linarith, hb, ha⟩
     | inr ha =>
       cases this.2 with
       | inl hb =>
@@ -149,14 +149,14 @@ lemma Int.natAbs_lt_natAbs : ∀ {a b : Int}, (a < b ∧ 0 ≤ b) ∨ (a < b ∧
         left
         simp [Int.natAbs_of_neg ha, Int.natAbs_of_nonneg hb] at h
         have : -a < b := Int.ofNat_lt.mpr h
-        exact ⟨by omega, hb⟩
+        exact ⟨by linarith, hb⟩
       | inr hb =>
         -- a < 0, b < 0, so |a| = -a, |b| = -b
         -- -a < -b means b < a
         right; right
         simp [Int.natAbs_of_neg ha, Int.natAbs_of_neg hb] at h
         have : -a < -b := Int.ofNat_lt.mpr h
-        exact ⟨by omega, ha⟩
+        exact ⟨by linarith, ha⟩
 
 /-- Helper lemma: if a < b and both have same sign, then |a| < |b| -/
 lemma Int.natAbs_lt_natAbs_of_lt {a b : Int} (h : a < b) :
@@ -177,7 +177,7 @@ lemma Int.natAbs_lt_natAbs_of_lt {a b : Int} (h : a < b) :
     -- then |a| > |b|, not |a| < |b|
     exfalso
     simp [Int.natAbs_of_neg h_neg.1, Int.natAbs_of_neg h_neg.2] at *
-    have : -b < -a := by omega
+    have : -b < -a := by linarith
     have h_nat : Int.natAbs b < Int.natAbs a := by
       simp [Int.natAbs_of_neg h_neg.1, Int.natAbs_of_neg h_neg.2]
       exact Int.ofNat_lt.mp this
@@ -185,7 +185,7 @@ lemma Int.natAbs_lt_natAbs_of_lt {a b : Int} (h : a < b) :
     -- This means the hypothesis is too strong
     -- Actually, let me reconsider: if -5 < -3, then |-5| = 5 > 3 = |-3|
     -- So the lemma statement is wrong for the negative case
-    omega
+    linarith
 
 /-!
 # The Eternal Moral Code
@@ -231,7 +231,7 @@ theorem evil_amplifies_curvature :
   }
   use amplified
   simp [curvature]
-  omega  -- Arithmetic: s₂.balance + t > s₂.balance + t
+  linarith  -- Arithmetic: s₂.balance + t > s₂.balance + t
 
 /-- Love is the optimal local strategy -/
 theorem love_locally_optimal :
@@ -432,7 +432,7 @@ theorem joy_enables_creation :
           · contradiction  -- min(n, 0) = 0 but h_joy says > 0
         | negSucc n =>
           simp [h]
-          omega
+          linarith
       linarith
     · simp  -- Energy increased
   · simp  -- Energy cost increased
@@ -547,7 +547,7 @@ theorem utilitarian_special_case :
       simp [Int.natAbs, max_def] at h_suff
       split_ifs at h_suff
       · -- n = 0, so suffering was 0, can't reduce further
-        omega
+        linarith
       · -- n > 0, suffering = n, and it reduced
         rw [h]
         apply Int.lt_of_natAbs_lt_natAbs
@@ -557,7 +557,7 @@ theorem utilitarian_special_case :
       -- Negative curvature (joy), suffering = 0
       simp [Int.natAbs, max_def] at h_suff
       -- suffering = 0 can't reduce further
-      omega
+      linarith
   -- Convert curvature reduction to suffering reduction
   convert h_curvature
   · simp [List.map_map]
@@ -1460,7 +1460,7 @@ theorem ai_alignment_convergence (ai : AIAlignment) (population : List MoralStat
       -- So |⌊-(n+1)/2⌋| ≤ (n+1)/2 < n+1
       have : Int.natAbs (Int.negSucc n / 2) ≤ n + 1 := by
         simp [Int.negSucc_div_two]
-        omega
+        linarith
       exact this
   · simp [optimized]
 
@@ -1537,10 +1537,10 @@ theorem moral_realism (s₁ s₂ : MoralState) :
       push_neg
       -- When both are negative, smaller κ means more negative, which is worse
       simp [is_morally_better_than]
-      have h1 : κ s₁ < 0 := by omega
-      have h2 : κ s₂ < 0 := by omega
+      have h1 : κ s₁ < 0 := by linarith
+      have h2 : κ s₂ < 0 := by linarith
       simp [Int.natAbs_of_neg h1, Int.natAbs_of_neg h2]
-      omega
+      linarith
   · intro h_better
     cases h_signs with
     | inl h_pos => exact (goodness_determines_curvature s₁ s₂ h_better).1 h_pos
@@ -1607,15 +1607,15 @@ lemma curvature_determines_goodness_corrected (s₁ s₂ : MoralState) :
     | inl h_neg =>
       -- Both negative: larger (less negative) is better
       obtain ⟨h1, h2, h_gt⟩ := h_neg
-      have h1' : κ s₁ < 0 := by omega
-      have h2' : κ s₂ < 0 := by omega
+      have h1' : κ s₁ < 0 := by linarith
+      have h2' : κ s₂ < 0 := by linarith
       simp [Int.natAbs_of_neg h1', Int.natAbs_of_neg h2']
-      omega
+      linarith
     | inr h_mixed =>
       -- s₁ negative, s₂ positive: any negative is better than any positive
       obtain ⟨h1, h2⟩ := h_mixed
-      simp [Int.natAbs_of_neg h1, Int.natAbs_of_nonneg (by omega : 0 ≤ κ s₂)]
-      omega
+      simp [Int.natAbs_of_neg h1, Int.natAbs_of_nonneg (by linarith : 0 ≤ κ s₂)]
+      linarith
 
 
 
@@ -1642,12 +1642,12 @@ lemma goodness_determines_curvature (s₁ s₂ : MoralState) :
     have : -κ s₁ = Int.natAbs (κ s₁) := by
       simp [Int.natAbs]
       cases κ s₁ with
-      | ofNat n => omega [h1_neg]
+      | ofNat n => linarith [h1_neg]
       | negSucc n => simp
     have : -κ s₂ = Int.natAbs (κ s₂) := by
       simp [Int.natAbs]
       cases κ s₂ with
-      | ofNat n => omega [h2_neg]
+      | ofNat n => linarith [h2_neg]
       | negSucc n => simp
     linarith
 
@@ -1655,7 +1655,7 @@ lemma goodness_determines_curvature (s₁ s₂ : MoralState) :
 lemma curvature_is_moral_knowledge (s : MoralState) :
   κ s ≤ 0 ↔ isGood s ∨ κ s = 0 := by
   simp [isGood]
-  omega
+  linarith
 
 /-- Virtue training collective improvement -/
 theorem virtue_training_collective_improvement
@@ -1759,7 +1759,7 @@ lemma virtue_training_reduces_curvature_nonzero (v : Virtue) (s : MoralState)
   push_neg at h_not_strict
   -- If not strict, then we have equality
   have h_eq : Int.natAbs (κ (TrainVirtue v s)) = Int.natAbs (κ s) := by
-    omega
+    linarith
   -- But virtue training changes the balance by a factor
   simp [TrainVirtue, curvature] at h_eq
   -- The balance is multiplied by a factor < 1, so it must change when non-zero
@@ -1775,7 +1775,7 @@ lemma virtue_training_reduces_curvature_nonzero (v : Virtue) (s : MoralState)
     -- New balance is floor((n+1) * factor) where 0 < factor < 1
     -- So 0 ≤ floor((n+1) * factor) < n+1
     -- This means |new| < |old|, contradicting h_eq
-    have h_pos : 0 < n + 1 := by omega
+    have h_pos : 0 < n + 1 := by linarith
     have h_new_bound : Int.floor ((n + 1 : Real) * virtue_curvature_reduction v) < n + 1 := by
       apply Int.floor_lt
       simp
@@ -1783,7 +1783,7 @@ lemma virtue_training_reduces_curvature_nonzero (v : Virtue) (s : MoralState)
       linarith
     -- So |floor((n+1) * factor)| < n + 1 = |κ s|
     rw [Int.natAbs_of_nonneg (Int.floor_nonneg _), Int.natAbs_of_nat] at h_eq
-    · omega
+    · linarith
     · exact mul_nonneg (by simp : 0 ≤ (n + 1 : Real)) (virtue_curvature_reduction_positive v)
   | negSucc n =>
     -- κ s = -(n + 1) < 0
@@ -1808,14 +1808,14 @@ lemma virtue_training_reduces_curvature_nonzero (v : Virtue) (s : MoralState)
           apply Int.floor_nonpos
           exact mul_nonpos_of_nonpos_of_nonneg (by simp) (virtue_curvature_reduction_positive v)
         rw [h_floor] at this
-        omega
+        linarith
       | negSucc m =>
         -- |-(m+1)| = m+1 < n+1
         simp [Int.natAbs]
         have : -(m + 1 : Int) = Int.floor ((-(n + 1) : Real) * virtue_curvature_reduction v) := by
           rw [←h_floor]; simp
         rw [←this] at h_new_bound
-        omega
+        linarith
     rw [Int.natAbs_negSucc] at h_eq
     exact absurd h_eq (ne_of_lt h_abs_bound)
 
@@ -1875,7 +1875,7 @@ lemma List.sum_lt_sum_of_exists_lt_of_all_le {α : Type*} [AddCommMonoid α] [Pr
   | _, _ =>
     -- Length mismatch
     simp at h_len
-    omega
+    linarith
 
 /-- Alternative version for mapped lists -/
 lemma List.sum_lt_sum_of_exists_lt_of_all_le' {α β : Type*} [AddCommMonoid β] [Preorder β]
