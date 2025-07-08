@@ -46,8 +46,9 @@ structure MoralState where
 private def positive_energy : Energy := { cost := 1.0 }
 
 /-- Proof that our energy is positive -/
-private theorem positive_energy_valid : positive_energy.cost > 0 := by
-  simp [positive_energy]; native_decide
+private lemma positive_energy_valid : positive_energy.cost > 0 := by
+  unfold positive_energy
+  simp
 
 /-- Convenience zero state -/
 def MoralState.zero : MoralState :=
