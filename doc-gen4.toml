@@ -1,0 +1,11 @@
+[package]
+name = "Ethics"
+description = "Recognition Science Ethics Framework"
+version = "0.1.0"
+
+[build]
+docs_root = "Ethics" 
+modules = ["Ethics.CoreTypes", "Helpers", "Virtue", "Applications"]
+
+[output]
+format = "html"
