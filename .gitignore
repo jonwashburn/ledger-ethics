@@ -1,0 +1,53 @@
+# macOS metadata
+.DS_Store
+Thumbs.db
+
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Lean / Lake build artifacts
+.lake/
+lake-manifest.json
+*.olean
+*.ilean
+
+# Build directories
+build/
+
+# Virtual environments / Python envs
+env/
+venv/
+.venv/
+.env
+
+# Node modules
+node_modules/
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+
+# Large binaries and generated PDFs
+*.pdf
+*.png
+*.jpg
+*.aux
+*.log
+*.out
+
+# Temporary working dirs
+.cache/
+working/
+
+# Archive directory (legacy large files)
+archive/
+
+# Extra ignore patterns
+eep
+
+# Keep docs text files tracked
+!docs/*.txt
+
+# Specific large dataset to ignore
+Particle-Masses-B.txt
