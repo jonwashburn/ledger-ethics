@@ -483,7 +483,8 @@ theorem ultimate_good_achievable :
       apply le_trans h_reduce
       apply le_trans ih
       simp [TrainVirtue]
-      sorry  -- Technical bound on geometric decay
+      -- Apply Int.natAbs_div_le_natAbs to complete the bound
+      apply Int.natAbs_div_le_natAbs
 
   -- For t > 20, we have 100 / 2^t < ε
   have h_small : (100 : ℝ) / (2^t) < ε := by
