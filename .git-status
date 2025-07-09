@@ -1,0 +1,9 @@
+# Git Repository Status for Background Agent
+INITIALIZED=true
+REPOSITORY_TYPE=git
+WORKING_DIRECTORY=/Users/jonathanwashburn/Desktop/Ethics/ledger-ethics
+BRANCH=background-agent-proofs
+REMOTE_URL=https://github.com/jonwashburn/ledger-ethics.git
+CLEAN_WORKING_TREE=true
+GIT_VERSION=2.39.5
+LAST_VERIFIED=$(date)
