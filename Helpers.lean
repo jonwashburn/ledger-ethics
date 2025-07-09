@@ -107,7 +107,37 @@ lemma List.sum_eq_zero_of_nonneg {α : Type*} [AddCommMonoid α] [Preorder α] [
     -- x + (sum of rest) = 0, and sum of rest ≥ 0, so x ≤ 0
     have h_rest_nonneg : l.sum - x ≥ 0 := by
       -- This requires more careful analysis of list structure
-      sorry
+      -- Since l.sum = 0 and x ∈ l, and all elements are non-negative
+      -- we have l.sum = x + (rest of elements) = 0
+      -- Since rest of elements ≥ 0, we need x ≤ 0
+      -- Combined with x ≥ 0, we get x = 0, so l.sum - x = 0 - 0 = 0 ≥ 0
+      have h_x_zero : x = 0 := by
+        -- x ≥ 0 from h_nonneg, and x ≤ 0 from sum constraint, so x = 0
+        have h_x_le_zero : x ≤ 0 := by
+          by_contra h_pos
+          push_neg at h_pos
+          -- If x > 0, then since all other elements ≥ 0, sum > 0
+          have h_sum_pos : l.sum > 0 := by
+            -- l contains x > 0 and all other elements ≥ 0
+            have h_x_in_sum : ∃ (rest : List α), l.sum = x + rest.sum ∧ (∀ y ∈ rest, y ≥ 0) := by
+              -- Use list erasure to decompose sum
+              have h_perm : l ~ x :: l.erase x := List.perm_cons_erase hx
+              use l.erase x
+              constructor
+              · rw [List.Perm.sum_eq h_perm]
+                simp [List.sum_cons]
+              · intro y hy
+                have h_y_in_l : y ∈ l := List.mem_of_mem_erase hy
+                exact h_nonneg y h_y_in_l
+            obtain ⟨rest, h_decomp, h_rest_nonneg⟩ := h_x_in_sum
+            rw [h_decomp]
+            apply add_pos_of_pos_of_nonneg h_pos
+            exact List.sum_nonneg h_rest_nonneg
+          rw [h_sum] at h_sum_pos
+          exact absurd h_sum_pos (lt_irrefl 0)
+        exact le_antisymm h_x_le_zero (h_nonneg x hx)
+      rw [h_x_zero, h_sum]
+      simp
     linarith [h_sum]
   exact le_antisymm h_le (h_nonneg x hx)
 
