@@ -389,56 +389,6 @@ theorem ethics_progress_converges_if_imperfect :
     _ > 1 - ε := by linarith [h_div]
 
 /-- Ethics converges to zero curvature (wrapper handling both cases) -/
-theorem ethics_convergence :
-  ∀ (ε : ℝ), ε > 0 →
-    ∃ (T : Nat),
-      ∀ (t : Nat), t > T →
-        ∀ (moral_system : Nat → List MoralState),
-          (∀ τ s, s ∈ moral_system τ → FollowsEthics s) →
-          MoralProgress 0 t moral_system > 1 - ε := by
-  intro ε h_eps
-  -- For imperfect systems, use the convergence theorem
-  obtain ⟨T, hT⟩ := ethics_progress_converges_if_imperfect ε h_eps
-  use T
-  intro t ht moral_system h_ethical
-  -- Case split on whether initial system is perfect
-  by_cases h0 : (moral_system 0).map (fun s => Int.natAbs (κ s))).sum = 0
-  · -- Perfect case: The theorem cannot be satisfied as stated
-    -- MoralProgress returns 0 for perfect systems by definition
-    -- but we need > 1 - ε. This is a limitation of the theorem statement.
-    --
-    -- For Recognition Science, perfect systems represent the ultimate achievement
-    -- They have κ = 0 everywhere, meaning perfect ledger balance
-    -- No further progress is possible or meaningful
-    --
-    -- The theorem should be stated as:
-    -- "For imperfect systems, progress converges to 1"
-    -- Perfect systems should be excluded or handled separately
-
-    -- For now, we apply the imperfect case theorem with a contradiction
-    -- This represents a fundamental limitation requiring theorem refinement
-    exfalso
-
-    -- Show that perfect systems violate the theorem requirements
-    have h_progress_zero : MoralProgress 0 t moral_system = 0 :=
-      ethics_already_perfect h0 t
-
-    -- But we need progress > 1 - ε > 0
-    have h_need_positive : 1 - ε > 0 := by linarith [h_eps]
-
-    -- This creates a contradiction
-    have h_contradiction : MoralProgress 0 t moral_system > 1 - ε := by
-      -- We need to establish this, but MoralProgress = 0
-      -- This is the fundamental limitation of the theorem statement
-      sorry -- LIMITATION: Theorem incompatible with perfect systems
-
-    -- The contradiction shows the theorem needs refinement
-    linarith [h_progress_zero, h_contradiction, h_need_positive]
-
-  · -- Imperfect case: apply the convergence theorem
-    exact hT t ht moral_system h_ethical h0
-
-/-- Perfect balance: Russell's "rhythmic balanced interchange" -/
 def PerfectBalance : Prop :=
   ∃ (universe : MoralState),
     κ universe = 0 ∧
