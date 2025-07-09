@@ -228,7 +228,7 @@ lemma virtue_training_reduces_curvature_nonzero (v : Virtue) (s : MoralState)
         · simp [h_small]
           exact Nat.succ_pos k
         · simp [h_small]
-          exact le_refl _
+          simp
       | _ =>
         -- Other virtues use 0.9 factor, so strict reduction for positive values
         simp [TrainVirtue]

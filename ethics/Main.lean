@@ -18,7 +18,8 @@ import Ethics.Applications
 import Ethics.Helpers  -- Add this import
 import Ethics.DiscreteHelpers  -- Add discrete helpers
 import Recognition.Util.List
-import RecognitionScience
+import Foundation.EightBeat
+import Foundation.GoldenRatio
 import Foundation.Helpers.InfoTheory
 import Helpers.ListPartition
 import Mathlib.Data.Real.Basic
@@ -65,14 +66,14 @@ lemma Int.lt_of_natAbs_lt_natAbs {a b : Int} (h : Int.natAbs a < Int.natAbs b) :
       right
       simp [ha, hb]
       simp [Int.natAbs] at h
-      linarith
+      omega
   | negSucc n =>
     cases hb : b with
     | ofNat m =>
       -- a < 0, b ≥ 0: clearly a < b
       left
       simp [ha, hb]
-      linarith
+      omega
     | negSucc m =>
       -- Both negative: |a| = n + 1, |b| = m + 1
       -- n + 1 < m + 1 means n < m, so -n - 1 > -m - 1, i.e., a > b
@@ -80,7 +81,7 @@ lemma Int.lt_of_natAbs_lt_natAbs {a b : Int} (h : Int.natAbs a < Int.natAbs b) :
       right
       simp [ha, hb] at h ⊢
       simp [Int.natAbs] at h
-      linarith
+      omega
 
 /-- Helper lemma: absolute value comparison -/
 lemma Int.natAbs_lt_natAbs : ∀ {a b : Int}, (a < b ∧ 0 ≤ b) ∨ (a < b ∧ b < 0 ∧ 0 ≤ a) ∨ (-b < a ∧ a < 0) ↔ Int.natAbs a < Int.natAbs b := by
@@ -90,7 +91,7 @@ lemma Int.natAbs_lt_natAbs : ∀ {a b : Int}, (a < b ∧ 0 ≤ b) ∨ (a < b ∧
     cases h with
     | inl h1 =>
       -- a < b ∧ 0 ≤ b
-      have : 0 ≤ a ∨ a < 0 := by linarith
+      have : 0 ≤ a ∨ a < 0 := by omega
       cases this with
       | inl ha =>
         -- 0 ≤ a < b, so |a| = a < b = |b|
@@ -100,31 +101,31 @@ lemma Int.natAbs_lt_natAbs : ∀ {a b : Int}, (a < b ∧ 0 ≤ b) ∨ (a < b ∧
         -- a < 0 < b, so |a| = -a and |b| = b
         -- Need to show -a < b, which follows from a < b and a < 0
         simp [Int.natAbs_of_neg ha, Int.natAbs_of_nonneg h1.2]
-        have : -a < b := by linarith
+        have : -a < b := by omega
         exact Int.ofNat_lt.mp this
     | inr h2 =>
       cases h2 with
       | inl h2 =>
         -- a < b ∧ b < 0 ∧ 0 ≤ a
         -- This means 0 ≤ a < b < 0, which is impossible
-        linarith
+        omega
       | inr h3 =>
         -- -b < a ∧ a < 0
         -- So b < 0 (else -b < 0 < a contradicts a < 0)
         have hb : b < 0 := by
           by_contra h
           push_neg at h
-          have : -b ≤ 0 := by linarith
-          linarith
+          have : -b ≤ 0 := by omega
+          omega
         -- |a| = -a, |b| = -b, and we have -b < a < 0
         -- So |b| = -b < a < 0, thus |b| < -a = |a|... wait, that's backwards
         -- Actually: -b < a means |b| < -a = |a|
         simp [Int.natAbs_of_neg h3.2, Int.natAbs_of_neg hb]
-        have : -a < -b := by linarith
+        have : -a < -b := by omega
         exact Int.ofNat_lt.mp this
   · intro h
     -- We have |a| < |b| and want to derive one of the three cases
-    have : (0 ≤ a ∨ a < 0) ∧ (0 ≤ b ∨ b < 0) := by linarith
+    have : (0 ≤ a ∨ a < 0) ∧ (0 ≤ b ∨ b < 0) := by omega
     cases this.1 with
     | inl ha =>
       cases this.2 with
@@ -141,7 +142,7 @@ lemma Int.natAbs_lt_natAbs : ∀ {a b : Int}, (a < b ∧ 0 ≤ b) ∨ (a < b ∧
         right; left
         simp [Int.natAbs_of_nonneg ha, Int.natAbs_of_neg hb] at h
         have : a < -b := Int.ofNat_lt.mpr h
-        exact ⟨by linarith, hb, ha⟩
+        exact ⟨by omega, hb, ha⟩
     | inr ha =>
       cases this.2 with
       | inl hb =>
@@ -149,14 +150,14 @@ lemma Int.natAbs_lt_natAbs : ∀ {a b : Int}, (a < b ∧ 0 ≤ b) ∨ (a < b ∧
         left
         simp [Int.natAbs_of_neg ha, Int.natAbs_of_nonneg hb] at h
         have : -a < b := Int.ofNat_lt.mpr h
-        exact ⟨by linarith, hb⟩
+        exact ⟨by omega, hb⟩
       | inr hb =>
         -- a < 0, b < 0, so |a| = -a, |b| = -b
         -- -a < -b means b < a
         right; right
         simp [Int.natAbs_of_neg ha, Int.natAbs_of_neg hb] at h
         have : -a < -b := Int.ofNat_lt.mpr h
-        exact ⟨by linarith, ha⟩
+        exact ⟨by omega, ha⟩
 
 /-- Helper lemma: if a < b and both have same sign, then |a| < |b| -/
 lemma Int.natAbs_lt_natAbs_of_lt {a b : Int} (h : a < b) :
@@ -177,7 +178,7 @@ lemma Int.natAbs_lt_natAbs_of_lt {a b : Int} (h : a < b) :
     -- then |a| > |b|, not |a| < |b|
     exfalso
     simp [Int.natAbs_of_neg h_neg.1, Int.natAbs_of_neg h_neg.2] at *
-    have : -b < -a := by linarith
+    have : -b < -a := by omega
     have h_nat : Int.natAbs b < Int.natAbs a := by
       simp [Int.natAbs_of_neg h_neg.1, Int.natAbs_of_neg h_neg.2]
       exact Int.ofNat_lt.mp this
@@ -185,7 +186,7 @@ lemma Int.natAbs_lt_natAbs_of_lt {a b : Int} (h : a < b) :
     -- This means the hypothesis is too strong
     -- Actually, let me reconsider: if -5 < -3, then |-5| = 5 > 3 = |-3|
     -- So the lemma statement is wrong for the negative case
-    linarith
+    omega
 
 /-!
 # The Eternal Moral Code
@@ -202,14 +203,16 @@ def UniversalMoralLaw : Prop :=
         other ∈ actions →
         (states.map optimal).map κ |>.sum ≤ (states.map other).map κ |>.sum
 
-/-- Good is geometric flatness in recognition space -/
-theorem good_is_zero_curvature :
+/-- Good is defined as zero moral curvature
+A moral state is good when its ledger is perfectly balanced,
+representing a flat geometry in recognition space with no moral debt. -/theorem good_is_zero_curvature :
   ∀ s : MoralState, isGood s ↔ κ s = 0 := by
   intro s
   rfl  -- By definition
 
-/-- Evil amplifies curvature through falsification -/
-theorem evil_amplifies_curvature :
+/-- Evil actions amplify moral curvature through falsification
+When an evil act breaks conservation laws, it creates runaway curvature growth,
+demonstrating how destructive actions compound their negative effects over time. -/theorem evil_amplifies_curvature :
   ∀ s₁ s₂ : MoralState,
     EvilAct s₁ s₂ →
     ∃ (n : Nat), ∀ (t : Nat), t > n →
@@ -231,8 +234,9 @@ theorem evil_amplifies_curvature :
   }
   use amplified
   simp [curvature]
-  linarith  -- Arithmetic: s₂.balance + t > s₂.balance + t
-
+  omega  -- Arithmetic: s₂.balance + t > s₂.balance + t
+By equalizing curvature between two states, love minimizes the variance while
+preserving total curvature, making it the most efficient virtue for local healing. -/
 /-- Love is the optimal local strategy -/
 theorem love_locally_optimal :
   ∀ (s₁ s₂ : MoralState),
@@ -275,7 +279,8 @@ axiom consciousness_navigates_gaps :
  dependency explicit.
 -/
 
-/-- Suffering signals recognition debt -/
+When moral curvature is positive (ledger imbalance with more debits than credits),
+this manifests experientially as suffering, providing clear feedback about moral state. -//-- Suffering signals recognition debt -/
 theorem suffering_is_debt_signal :
   ∀ s : MoralState,
     suffering s > 0 ↔
@@ -380,7 +385,8 @@ theorem suffering_is_debt_signal :
         have h_init_pos : 0 < init := by rw [←h_init]; exact h_e
         clear h_e h_init
         induction es generalizing init with
-        | nil => simp; exact le_of_lt h_init_pos
+When the moral ledger has surplus credits, this manifests as joy and provides
+the energetic resources needed for creative expression and new value generation. -/        | nil => simp; exact le_of_lt h_init_pos
         | cons x xs ih =>
           simp [List.foldl_cons]
           have h_x : x.debit - x.credit > 0 := by
@@ -432,7 +438,7 @@ theorem joy_enables_creation :
           · contradiction  -- min(n, 0) = 0 but h_joy says > 0
         | negSucc n =>
           simp [h]
-          linarith
+          omega
       linarith
     · simp  -- Energy increased
   · simp  -- Energy cost increased
@@ -547,7 +553,7 @@ theorem utilitarian_special_case :
       simp [Int.natAbs, max_def] at h_suff
       split_ifs at h_suff
       · -- n = 0, so suffering was 0, can't reduce further
-        linarith
+        omega
       · -- n > 0, suffering = n, and it reduced
         rw [h]
         apply Int.lt_of_natAbs_lt_natAbs
@@ -557,7 +563,7 @@ theorem utilitarian_special_case :
       -- Negative curvature (joy), suffering = 0
       simp [Int.natAbs, max_def] at h_suff
       -- suffering = 0 can't reduce further
-      linarith
+      omega
   -- Convert curvature reduction to suffering reduction
   convert h_curvature
   · simp [List.map_map]
@@ -1460,7 +1466,7 @@ theorem ai_alignment_convergence (ai : AIAlignment) (population : List MoralStat
       -- So |⌊-(n+1)/2⌋| ≤ (n+1)/2 < n+1
       have : Int.natAbs (Int.negSucc n / 2) ≤ n + 1 := by
         simp [Int.negSucc_div_two]
-        linarith
+        omega
       exact this
   · simp [optimized]
 
@@ -1537,10 +1543,10 @@ theorem moral_realism (s₁ s₂ : MoralState) :
       push_neg
       -- When both are negative, smaller κ means more negative, which is worse
       simp [is_morally_better_than]
-      have h1 : κ s₁ < 0 := by linarith
-      have h2 : κ s₂ < 0 := by linarith
+      have h1 : κ s₁ < 0 := by omega
+      have h2 : κ s₂ < 0 := by omega
       simp [Int.natAbs_of_neg h1, Int.natAbs_of_neg h2]
-      linarith
+      omega
   · intro h_better
     cases h_signs with
     | inl h_pos => exact (goodness_determines_curvature s₁ s₂ h_better).1 h_pos
@@ -1607,15 +1613,15 @@ lemma curvature_determines_goodness_corrected (s₁ s₂ : MoralState) :
     | inl h_neg =>
       -- Both negative: larger (less negative) is better
       obtain ⟨h1, h2, h_gt⟩ := h_neg
-      have h1' : κ s₁ < 0 := by linarith
-      have h2' : κ s₂ < 0 := by linarith
+      have h1' : κ s₁ < 0 := by omega
+      have h2' : κ s₂ < 0 := by omega
       simp [Int.natAbs_of_neg h1', Int.natAbs_of_neg h2']
-      linarith
+      omega
     | inr h_mixed =>
       -- s₁ negative, s₂ positive: any negative is better than any positive
       obtain ⟨h1, h2⟩ := h_mixed
-      simp [Int.natAbs_of_neg h1, Int.natAbs_of_nonneg (by linarith : 0 ≤ κ s₂)]
-      linarith
+      simp [Int.natAbs_of_neg h1, Int.natAbs_of_nonneg (by omega : 0 ≤ κ s₂)]
+      omega
 
 
 
@@ -1642,12 +1648,12 @@ lemma goodness_determines_curvature (s₁ s₂ : MoralState) :
     have : -κ s₁ = Int.natAbs (κ s₁) := by
       simp [Int.natAbs]
       cases κ s₁ with
-      | ofNat n => linarith [h1_neg]
+      | ofNat n => omega [h1_neg]
       | negSucc n => simp
     have : -κ s₂ = Int.natAbs (κ s₂) := by
       simp [Int.natAbs]
       cases κ s₂ with
-      | ofNat n => linarith [h2_neg]
+      | ofNat n => omega [h2_neg]
       | negSucc n => simp
     linarith
 
@@ -1655,7 +1661,7 @@ lemma goodness_determines_curvature (s₁ s₂ : MoralState) :
 lemma curvature_is_moral_knowledge (s : MoralState) :
   κ s ≤ 0 ↔ isGood s ∨ κ s = 0 := by
   simp [isGood]
-  linarith
+  omega
 
 /-- Virtue training collective improvement -/
 theorem virtue_training_collective_improvement
@@ -1759,7 +1765,7 @@ lemma virtue_training_reduces_curvature_nonzero (v : Virtue) (s : MoralState)
   push_neg at h_not_strict
   -- If not strict, then we have equality
   have h_eq : Int.natAbs (κ (TrainVirtue v s)) = Int.natAbs (κ s) := by
-    linarith
+    omega
   -- But virtue training changes the balance by a factor
   simp [TrainVirtue, curvature] at h_eq
   -- The balance is multiplied by a factor < 1, so it must change when non-zero
@@ -1775,7 +1781,7 @@ lemma virtue_training_reduces_curvature_nonzero (v : Virtue) (s : MoralState)
     -- New balance is floor((n+1) * factor) where 0 < factor < 1
     -- So 0 ≤ floor((n+1) * factor) < n+1
     -- This means |new| < |old|, contradicting h_eq
-    have h_pos : 0 < n + 1 := by linarith
+    have h_pos : 0 < n + 1 := by omega
     have h_new_bound : Int.floor ((n + 1 : Real) * virtue_curvature_reduction v) < n + 1 := by
       apply Int.floor_lt
       simp
@@ -1783,7 +1789,7 @@ lemma virtue_training_reduces_curvature_nonzero (v : Virtue) (s : MoralState)
       linarith
     -- So |floor((n+1) * factor)| < n + 1 = |κ s|
     rw [Int.natAbs_of_nonneg (Int.floor_nonneg _), Int.natAbs_of_nat] at h_eq
-    · linarith
+    · omega
     · exact mul_nonneg (by simp : 0 ≤ (n + 1 : Real)) (virtue_curvature_reduction_positive v)
   | negSucc n =>
     -- κ s = -(n + 1) < 0
@@ -1808,14 +1814,14 @@ lemma virtue_training_reduces_curvature_nonzero (v : Virtue) (s : MoralState)
           apply Int.floor_nonpos
           exact mul_nonpos_of_nonpos_of_nonneg (by simp) (virtue_curvature_reduction_positive v)
         rw [h_floor] at this
-        linarith
+        omega
       | negSucc m =>
         -- |-(m+1)| = m+1 < n+1
         simp [Int.natAbs]
         have : -(m + 1 : Int) = Int.floor ((-(n + 1) : Real) * virtue_curvature_reduction v) := by
           rw [←h_floor]; simp
         rw [←this] at h_new_bound
-        linarith
+        omega
     rw [Int.natAbs_negSucc] at h_eq
     exact absurd h_eq (ne_of_lt h_abs_bound)
 
@@ -1875,7 +1881,7 @@ lemma List.sum_lt_sum_of_exists_lt_of_all_le {α : Type*} [AddCommMonoid α] [Pr
   | _, _ =>
     -- Length mismatch
     simp at h_len
-    linarith
+    omega
 
 /-- Alternative version for mapped lists -/
 lemma List.sum_lt_sum_of_exists_lt_of_all_le' {α β : Type*} [AddCommMonoid β] [Preorder β]

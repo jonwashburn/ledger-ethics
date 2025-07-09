@@ -1,0 +1,13 @@
+--- a/Ethics/Helpers.lean
++++ b/Ethics/Helpers.lean
+@@ -228,7 +228,9 @@
+         · simp [h_small]
+           exact Nat.succ_pos k
+         · simp [h_small]
+-          exact le_refl _
++          -- When |k+1| ≥ 5, justice returns k+1-5
++          -- Since k+1 ≥ 5, we have k+1-5 ≥ 0, so |k+1-5| = k+1-5 ≤ k+1
++          simp
+       | _ =>
+         -- Other virtues use 0.9 factor, so strict reduction for positive values
+         simp [TrainVirtue]
