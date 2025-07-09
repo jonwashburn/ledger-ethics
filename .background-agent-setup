@@ -1,0 +1,13 @@
+# Background Agent Repository Setup
+REPO_ROOT=/Users/jonathanwashburn/Desktop/Ethics/ledger-ethics
+BRANCH=background-agent-proofs
+REMOTE_URL=https://github.com/jonwashburn/ledger-ethics.git
+PROJECT_TYPE=lean4
+BUILD_COMMAND=lake build
+TASK_FILE=docs/BACKGROUND_AGENT_TASKS.md
+SORRY_COUNT_CMD="grep -rn '\bsorry\b' --include='*.lean' . | grep -v 'Legacy' | grep -v '\.lake' | wc -l"
+GIT_INITIALIZED=true
+GIT_REMOTE_CONFIGURED=true
+GIT_USER_CONFIGURED=true
+LEAN_PROJECT=true
+MATHLIB_AVAILABLE=true

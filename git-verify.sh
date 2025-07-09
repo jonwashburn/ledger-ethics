@@ -1,0 +1,11 @@
+#!/bin/bash
+echo "=== GIT REPOSITORY VERIFICATION ==="
+echo "Working Directory: $(pwd)"
+echo "Git Repository: $(test -d .git && echo 'YES' || echo 'NO')"
+echo "Git Remote: $(git remote -v | head -1)"
+echo "Current Branch: $(git branch --show-current)"
+echo "Git Status: $(git status --porcelain | wc -l) untracked files"
+echo "Last Commit: $(git log --oneline -1)"
+echo "Git Config User: $(git config user.name) <$(git config user.email)>"
+echo "Repository URL: $(git remote get-url origin)"
+echo "=== VERIFICATION COMPLETE ==="
