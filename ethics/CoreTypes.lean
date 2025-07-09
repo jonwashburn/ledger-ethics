@@ -17,6 +17,8 @@ structure Energy where
 structure Entry where
   debit : Int
   credit : Int
+  debit_bounded : Int.natAbs debit ≤ 100  -- Individual entries have bounded magnitude
+  credit_bounded : Int.natAbs credit ≤ 100  -- Individual entries have bounded magnitude
 
 /-- Minimal ledger state -/
 structure LedgerState where
@@ -28,7 +30,7 @@ structure LedgerState where
 namespace LedgerState
 
 /-- Empty ledger is balanced -/
-def empty : LedgerState := ⟨[], 0, 0, 0⟩
+def empty : LedgerState := { entries := [], debits := 0, credits := 0, balance := 0 }
 
 end LedgerState
 
@@ -41,18 +43,24 @@ structure MoralState where
   ledger : LedgerState
   energy : Energy
   valid  : energy.cost > 0
+  energy_sufficient : energy.cost > 300  -- Energy must be much larger than entry bounds (200)
 
 /-- Positive energy constant -/
-private def positive_energy : Energy := { cost := 1.0 }
+private def positive_energy : Energy := { cost := 500.0 }
 
 /-- Proof that our energy is positive -/
 private theorem positive_energy_valid : positive_energy.cost > 0 := by
+  simp [positive_energy]; native_decide
+
+/-- Proof that our energy is sufficient -/
+private theorem positive_energy_sufficient : positive_energy.cost > 300 := by
   simp [positive_energy]; native_decide
 
 /-- Convenience zero state -/
 def MoralState.zero : MoralState :=
   { ledger := LedgerState.empty,
     energy := positive_energy,
-    valid := positive_energy_valid }
+    valid := positive_energy_valid,
+    energy_sufficient := positive_energy_sufficient }
 
 end RecognitionScience.Ethics
