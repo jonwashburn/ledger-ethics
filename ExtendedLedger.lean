@@ -296,7 +296,7 @@ def recordExtended (s : ExtendedLedgerState) (t : ExtendedTransaction)
           exact h_i
         have h_lower : i ≥ s.entries.length := h_i_new
         interval_cases i
-              have h_j_idx : j = s.entries.length ∨ j = s.entries.length + 1 := by
+      have h_j_idx : j = s.entries.length ∨ j = s.entries.length + 1 := by
           -- j ≥ entries.length and j < entries.length + 2, so j ∈ {entries.length, entries.length + 1}
           have h_upper : j < s.entries.length + 2 := by
             rw [List.length_append] at h_j
