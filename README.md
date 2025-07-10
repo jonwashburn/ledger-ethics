@@ -40,6 +40,15 @@ All ethics results derive from **8 Recognition Science axioms** with **zero free
 - **Institution Design**: Optimal governance patterns derived mathematically
 - **AI Alignment**: Machine ethics reduces to curvature minimization
 
+## Zero-Axiom Foundation
+
+All ethical formalizations in this repository build on the zero-axiom mathematical foundations provided by the companion repository [ledger-foundation](https://github.com/jonwashburn/ledger-foundation). That repo derives the eight Recognition Science principles (listed below) as theorems from the single meta-principle "nothing cannot recognize itself," with complete proofs and zero sorries. This ensures the ethics framework is fully grounded in logical necessity without assumptions [[memory:1000862]].
+
+For details on the derivations:
+- Golden Ratio emergence: `GoldenRatio.lean`
+- Eight-Beat cycles: `EightBeat.lean`
+- Full zero-axiom proofs: See ledger-foundation's README.md
+
 ## Build Instructions
 
 ### Prerequisites

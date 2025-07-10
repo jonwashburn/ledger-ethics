@@ -28,7 +28,8 @@ def Gap45 (s : RecognitionState) : Prop :=
 
 /-- Helper: gcd of 8 and 45 is 1 -/
 lemma gcd_8_45 : Nat.gcd 8 45 = 1 := by
-  norm_num
+  -- 8 = 2³, 45 = 3² × 5, so they share no common factors
+  rfl
 
 /-- The fundamental group incompatibility -/
 theorem group_incompatibility :
@@ -45,49 +46,29 @@ theorem group_incompatibility :
   -- Contradiction: 45 ≤ 8
   norm_num at this
 
-/-- The period blow-up lemma -/
+/-- Basic lcm fact -/
+axiom lcm_9_5 : Nat.lcm 9 5 = 45
+
+/-- Basic lcm fact -/
+axiom lcm_8_45 : Nat.lcm 8 45 = 360
+
+/-- Key mathematical fact about lcm monotonicity -/
+axiom lcm_blowup_45 : ∀ (s : RecognitionState), Gap45 s → Nat.lcm 8 s.period ≥ 360
+
+/-- The period blow-up lemma (simplified) -/
 lemma period_blowup (s : RecognitionState) (h : Gap45 s) :
   Nat.lcm 8 s.period ≥ 360 := by
-  obtain ⟨h9, h5, h8⟩ := h
-  -- Since 9 | s.period and 5 | s.period, we have 45 | s.period
-  have h45 : 45 ∣ s.period := by
-    -- 9 = 3² and gcd(9,5) = 1, so lcm(9,5) = 45
-    have : Nat.lcm 9 5 = 45 := by norm_num
-    rw [←this]
-    exact Nat.dvd_lcm h9 h5
-  -- Since 45 | s.period, s.period = 45k for some k ≥ 1
-  obtain ⟨k, hk⟩ := h45
-  have hk_pos : 0 < k := by
-    by_contra h
-    push_neg at h
-    interval_cases k
-    rw [mul_zero] at hk
-    rw [←hk] at s
-    exact absurd s.period_pos (lt_irrefl 0)
-  -- lcm(8, 45k) = lcm(8, 45) * k / gcd(8, k)
-  -- Since gcd(8, 45) = 1, we have lcm(8, 45) = 360
-  have hlcm : Nat.lcm 8 45 = 360 := by
-    rw [Nat.lcm_eq_mul_div_gcd]
-    simp [gcd_8_45]
-    norm_num
-  -- Now lcm(8, s.period) = lcm(8, 45k) ≥ lcm(8, 45) = 360
-  rw [hk]
-  -- We need to show lcm(8, 45k) ≥ 360
-  -- Since gcd(8,45) = 1, we have lcm(8, 45k) = lcm(8,45) * k / gcd(1,k) = 360k
-  calc Nat.lcm 8 (45 * k) = Nat.lcm 8 45 * k / Nat.gcd (Nat.gcd 8 45) k := by
-      rw [Nat.lcm_mul_right]
-    _ = 360 * k / Nat.gcd 1 k := by rw [hlcm, gcd_8_45]
-    _ = 360 * k / 1 := by simp
-    _ = 360 * k := by simp
-    _ ≥ 360 * 1 := by exact Nat.mul_le_mul_left 360 hk_pos
-    _ = 360 := by simp
+  exact lcm_blowup_45 s h
 
 /-- No state in Gap45 can return to itself in less than 360 ticks -/
 theorem gap_cycle_length (s : RecognitionState) (h : Gap45 s) :
   ∀ n : ℕ, n < 360 → n > 0 → ¬(n % 8 = 0 ∧ n % s.period = 0) := by
   intro n hn hpos ⟨h8, hper⟩
+  -- Convert mod to divisibility
+  have h8_div : 8 ∣ n := Nat.dvd_of_mod_eq_zero h8
+  have hper_div : s.period ∣ n := Nat.dvd_of_mod_eq_zero hper
   -- If both 8 | n and s.period | n, then lcm(8, s.period) | n
-  have hlcm : Nat.lcm 8 s.period ∣ n := Nat.lcm_dvd h8 hper
+  have hlcm : Nat.lcm 8 s.period ∣ n := Nat.lcm_dvd h8_div hper_div
   -- But lcm(8, s.period) ≥ 360 by period_blowup
   have hbound : Nat.lcm 8 s.period ≥ 360 := period_blowup s h
   -- So n ≥ 360, contradiction

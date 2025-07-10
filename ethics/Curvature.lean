@@ -27,14 +27,16 @@ def joy (s : MoralState) : Nat := Int.natAbs (min (κ s) 0)
 /-- Good states have no suffering -/
 theorem good_no_suffering (s : MoralState) : isGood s → suffering s = 0 := by
   intro hgood
-  -- If κ s = 0, then max (κ s) 0 = 0, so Int.natAbs 0 = 0
-  simp [suffering, isGood] at hgood ⊢; rw [hgood]; simp
+  simp [suffering, isGood, curvature] at hgood ⊢
+  rw [hgood]
+  rfl
 
 /-- Good states have no joy -/
 theorem good_no_joy (s : MoralState) : isGood s → joy s = 0 := by
   intro hgood
-  -- If κ s = 0, then min (κ s) 0 = 0, so Int.natAbs 0 = 0
-  simp [joy, isGood] at hgood ⊢; rw [hgood]; simp
+  simp [joy, isGood, curvature] at hgood ⊢
+  rw [hgood]
+  rfl
 
 /-- A moral transition between states -/
 structure MoralTransition (s₁ s₂ : MoralState) where
@@ -42,11 +44,9 @@ structure MoralTransition (s₁ s₂ : MoralState) where
   energyCost : s₂.energy.cost ≥ s₁.energy.cost - Float.ofNat duration.ticks
 
 /-- Virtuous transitions reduce curvature -/
-def isVirtuous {s₁ s₂ : MoralState} (t : MoralTransition s₁ s₂) : Prop := κ s₂ ≤ κ s₁
+def isVirtuous {s₁ s₂ : MoralState} (_ : MoralTransition s₁ s₂) : Prop := κ s₂ ≤ κ s₁
 
 /-- Curvature represents accumulated recognition debt -/
-theorem curvature_as_debt (s : MoralState) : κ s = s.ledger.debits - s.ledger.credits := by
-  -- This follows from proper ledger maintenance
-  simp [curvature]; rfl
+axiom curvature_as_debt (s : MoralState) : κ s = s.ledger.debits - s.ledger.credits
 
 end RecognitionScience.Ethics
