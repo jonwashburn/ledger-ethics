@@ -1634,8 +1634,8 @@ lemma curvature_determines_goodness_corrected (s₁ s₂ : MoralState) :
     | inl h_neg =>
       -- Both negative: larger (less negative) is better
       obtain ⟨h1, h2, h_gt⟩ := h_neg
-      have h1' : κ s₁ < 0 := by linarith
-      have h2' : κ s₂ < 0 := by linarith
+      have h1' : κ s₁ < 0 := by omega
+      have h2' : κ s₂ < 0 := by omega
       simp [Int.natAbs_of_neg h1', Int.natAbs_of_neg h2']
       omega
     | inr h_mixed =>

@@ -1634,8 +1634,8 @@ lemma curvature_determines_goodness_corrected (s₁ s₂ : MoralState) :
     | inl h_neg =>
       -- Both negative: larger (less negative) is better
       obtain ⟨h1, h2, h_gt⟩ := h_neg
-      have h1' : κ s₁ < 0 := by linarith
-      have h2' : κ s₂ < 0 := by linarith
+      have h1' : κ s₁ < 0 := by omega
+      have h2' : κ s₂ < 0 := by omega
       simp [Int.natAbs_of_neg h1', Int.natAbs_of_neg h2']
       omega
     | inr h_mixed =>
@@ -1802,7 +1802,7 @@ lemma virtue_training_reduces_curvature_nonzero (v : Virtue) (s : MoralState)
     -- New balance is floor((n+1) * factor) where 0 < factor < 1
     -- So 0 ≤ floor((n+1) * factor) < n+1
     -- This means |new| < |old|, contradicting h_eq
-    have h_pos : 0 < n + 1 := Nat.succ_pos n
+    have h_pos : 0 < n + 1 := by omega
     have h_new_bound : Int.floor ((n + 1 : Real) * virtue_curvature_reduction v) < n + 1 := by
       apply Int.floor_lt
       simp
