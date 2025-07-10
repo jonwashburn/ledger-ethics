@@ -575,7 +575,7 @@ theorem utilitarian_special_case :
       -- Negative curvature (joy), suffering = 0
       simp [Int.natAbs, max_def] at h_suff
       -- suffering = 0 can't reduce further
-      linarith
+      omega
   -- Convert curvature reduction to suffering reduction
   convert h_curvature
   · simp [List.map_map]
@@ -1478,7 +1478,7 @@ theorem ai_alignment_convergence (ai : AIAlignment) (population : List MoralStat
       -- So |⌊-(n+1)/2⌋| ≤ (n+1)/2 < n+1
       have : Int.natAbs (Int.negSucc n / 2) ≤ n + 1 := by
         simp [Int.negSucc_div_two]
-        linarith
+        omega
       exact this
   · simp [optimized]
 
@@ -1637,12 +1637,12 @@ lemma curvature_determines_goodness_corrected (s₁ s₂ : MoralState) :
       have h1' : κ s₁ < 0 := by linarith
       have h2' : κ s₂ < 0 := by linarith
       simp [Int.natAbs_of_neg h1', Int.natAbs_of_neg h2']
-      linarith
+      omega
     | inr h_mixed =>
       -- s₁ negative, s₂ positive: any negative is better than any positive
       obtain ⟨h1, h2⟩ := h_mixed
       simp [Int.natAbs_of_neg h1, Int.natAbs_of_nonneg (by linarith [h2])]
-      linarith
+      omega
 
 
 
@@ -1682,7 +1682,7 @@ lemma goodness_determines_curvature (s₁ s₂ : MoralState) :
 lemma curvature_is_moral_knowledge (s : MoralState) :
   κ s ≤ 0 ↔ isGood s ∨ κ s = 0 := by
   simp [isGood]
-  linarith
+  omega
 
 /-- Virtue training collective improvement -/
 theorem virtue_training_collective_improvement
@@ -1786,7 +1786,7 @@ lemma virtue_training_reduces_curvature_nonzero (v : Virtue) (s : MoralState)
   push_neg at h_not_strict
   -- If not strict, then we have equality
   have h_eq : Int.natAbs (κ (TrainVirtue v s)) = Int.natAbs (κ s) := by
-    linarith
+    omega
   -- But virtue training changes the balance by a factor
   simp [TrainVirtue, curvature] at h_eq
   -- The balance is multiplied by a factor < 1, so it must change when non-zero
@@ -1810,7 +1810,7 @@ lemma virtue_training_reduces_curvature_nonzero (v : Virtue) (s : MoralState)
       linarith
     -- So |floor((n+1) * factor)| < n + 1 = |κ s|
     rw [Int.natAbs_of_nonneg (Int.floor_nonneg _), Int.natAbs_of_nat] at h_eq
-    · linarith
+    · omega
     · exact mul_nonneg (by simp : 0 ≤ (n + 1 : Real)) (virtue_curvature_reduction_positive v)
   | negSucc n =>
     -- κ s = -(n + 1) < 0
@@ -1835,14 +1835,14 @@ lemma virtue_training_reduces_curvature_nonzero (v : Virtue) (s : MoralState)
           apply Int.floor_nonpos
           exact mul_nonpos_of_nonpos_of_nonneg (by simp) (virtue_curvature_reduction_positive v)
         rw [h_floor] at this
-        linarith
+        omega
       | negSucc m =>
         -- |-(m+1)| = m+1 < n+1
         simp [Int.natAbs]
         have : -(m + 1 : Int) = Int.floor ((-(n + 1) : Real) * virtue_curvature_reduction v) := by
           rw [←h_floor]; simp
         rw [←this] at h_new_bound
-        linarith
+        omega
     rw [Int.natAbs_negSucc] at h_eq
     exact absurd h_eq (ne_of_lt h_abs_bound)
 
@@ -1902,7 +1902,7 @@ lemma List.sum_lt_sum_of_exists_lt_of_all_le {α : Type*} [AddCommMonoid α] [Pr
   | _, _ =>
     -- Length mismatch
     simp at h_len
-    linarith
+    omega
 
 /-- Alternative version for mapped lists -/
 lemma List.sum_lt_sum_of_exists_lt_of_all_le' {α β : Type*} [AddCommMonoid β] [Preorder β]
