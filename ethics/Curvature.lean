@@ -28,13 +28,13 @@ def joy (s : MoralState) : Nat := Int.natAbs (min (κ s) 0)
 theorem good_no_suffering (s : MoralState) : isGood s → suffering s = 0 := by
   intro hgood
   -- If κ s = 0, then max (κ s) 0 = 0, so Int.natAbs 0 = 0
-  sorry
+  simp [suffering, isGood] at hgood ⊢; rw [hgood]; simp
 
 /-- Good states have no joy -/
 theorem good_no_joy (s : MoralState) : isGood s → joy s = 0 := by
   intro hgood
   -- If κ s = 0, then min (κ s) 0 = 0, so Int.natAbs 0 = 0
-  sorry
+  simp [joy, isGood] at hgood ⊢; rw [hgood]; simp
 
 /-- A moral transition between states -/
 structure MoralTransition (s₁ s₂ : MoralState) where
@@ -47,6 +47,6 @@ def isVirtuous {s₁ s₂ : MoralState} (t : MoralTransition s₁ s₂) : Prop :
 /-- Curvature represents accumulated recognition debt -/
 theorem curvature_as_debt (s : MoralState) : κ s = s.ledger.debits - s.ledger.credits := by
   -- This follows from proper ledger maintenance
-  sorry
+  simp [curvature]; rfl
 
 end RecognitionScience.Ethics

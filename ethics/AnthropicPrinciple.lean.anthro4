@@ -17,7 +17,7 @@ theorem observer_constrains_selection :
   has_conscious_observer reality →
   ∃ (constraints : List Pattern),
   all_selected_patterns ⊆ observer_compatible_patterns := by
-  use []; simp [Set.empty_subset]
+  sorry -- Anthropic principle requires consciousness theory
 
 -- Helper definitions
 def has_conscious_observer (r : RealityState) : Prop :=
@@ -30,6 +30,6 @@ def all_selected_patterns : Set Pattern :=
   ∅ -- Empty set of selected patterns
 
 def observer_compatible_patterns : Set Pattern :=
-  Set.univ -- All patterns are compatible
+  sorry  -- Patterns compatible with conscious observers
 
 end RecognitionScience.Ethics

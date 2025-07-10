@@ -124,7 +124,7 @@ theorem gap45_requires_nonalgorithmic (s : RecognitionState) (h : Gap45 s) :
       -- For different states, the same algorithm should work
       -- This requires a more sophisticated argument about
       -- the uniformity of Gap45 states
-      sorry -- Gap45 uniformity requires detailed analysis
+      sorry -- Would need uniform navigation property
 
 /-- Consciousness provides the only viable path for Gap45 navigation -/
 theorem consciousness_necessary_for_gaps :

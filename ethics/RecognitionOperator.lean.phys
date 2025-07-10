@@ -107,7 +107,7 @@ lemma recognition_returns (s : RecognitionState) (h : ¬Gap45 s) :
                   have h_physical : s.period ≤ 360 := by
                     -- This bound follows from the recognition dynamics
                     -- and the discrete nature of the ledger system
-                    have h_phys : s.period ≤ 360 := by sorry; exact h_phys
+                    sorry -- Accept physical bound for now
                   exact h_physical
                 rw [← h_bound]
                 norm_num
@@ -145,7 +145,7 @@ lemma recognition_returns (s : RecognitionState) (h : ¬Gap45 s) :
               have h_physical : s.period ≤ 360 := by
                 -- This follows from the recognition dynamics
                 -- and the discrete nature of the ledger system
-                have h_phys : s.period ≤ 360 := by sorry; exact h_phys
+                sorry -- Accept physical bound for now
               exact h_physical
             contradiction
         · linarith
@@ -203,7 +203,7 @@ lemma recognition_returns (s : RecognitionState) (h : ¬Gap45 s) :
               have h_physical : s.period ≤ 360 := by
                 -- This follows from the recognition dynamics
                 -- and the discrete nature of the ledger system
-                have h_phys : s.period ≤ 360 := by sorry; exact h_phys
+                sorry -- Accept physical bound for now
               exact h_physical
             exact h_bound
           | inr h_not_5 =>
@@ -215,7 +215,7 @@ lemma recognition_returns (s : RecognitionState) (h : ¬Gap45 s) :
               have h_physical : s.period ≤ 360 := by
                 -- This follows from the recognition dynamics
                 -- and the discrete nature of the ledger system
-                have h_phys : s.period ≤ 360 := by sorry; exact h_phys
+                sorry -- Accept physical bound for now
               exact h_physical
             exact h_bound
       · ext

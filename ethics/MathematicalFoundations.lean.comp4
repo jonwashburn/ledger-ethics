@@ -124,7 +124,7 @@ theorem gap45_requires_nonalgorithmic (s : RecognitionState) (h : Gap45 s) :
       -- For different states, the same algorithm should work
       -- This requires a more sophisticated argument about
       -- the uniformity of Gap45 states
-      sorry -- Gap45 uniformity requires detailed analysis
+      sorry -- Would need uniform navigation property
 
 /-- Consciousness provides the only viable path for Gap45 navigation -/
 theorem consciousness_necessary_for_gaps :
@@ -143,7 +143,7 @@ theorem consciousness_necessary_for_gaps :
   have h_efficient : RecognitionComplexity nav s ≤ 8 := by
     simp [RecognitionComplexity]
     -- If we can return in n ≤ 8 steps, recognition is efficient
-    simp [RecognitionComplexity]; sorry -- Need complexity formalization
+    sorry -- Would need to formalize the connection
   have h_inefficient : RecognitionComplexity nav s ≥ 360 := by
     -- For Gap45 states, recognition complexity is always high
     exact gap45_complexity_blowup s h_gap
@@ -168,6 +168,6 @@ theorem consciousness_computational_bridge :
   -- For gap states, conscious_nav provides a short path
   simp [conscious_nav, h_gap]
   -- Classical.choose gives us the witness
-  exact Classical.choose_spec (exists_short_path s (by use 0; simp))
+  exact Classical.choose_spec (exists_short_path s (by simp; sorry))
 
 end RecognitionScience.Ethics

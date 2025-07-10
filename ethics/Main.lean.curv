@@ -1559,12 +1559,12 @@ theorem moral_realism (s₁ s₂ : MoralState) :
         -- κ is negative when ledger balance is negative
         simp [curvature]
         -- Use the specific context that led to this case
-        simp [curvature]; sorry -- Curvature from ledger
+        sorry -- Explicit curvature reasoning
       have h2 : κ s₂ < 0 := by
         -- κ is negative when ledger balance is negative
         simp [curvature]
         -- Use the specific context that led to this case
-        simp [curvature]; sorry -- Curvature from ledger
+        sorry -- Explicit curvature reasoning
       simp [Int.natAbs_of_neg h1, Int.natAbs_of_neg h2]
       -- Compare the absolute values of the negative curvatures
       linarith
