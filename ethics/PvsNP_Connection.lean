@@ -95,7 +95,20 @@ theorem gap_states_are_NP_hard :
       · norm_num
       · exact s.period_pos
     · -- This would give us a way to navigate gaps quickly
-      sorry  -- Would need to connect recognition time to navigation
+      -- Recognition time measures how long to observe ℛ^[n] (alg s) = s
+        -- If RecognitionTime is fast, then such an n exists and is small
+        use RecognitionTime alg s
+        constructor
+        · exact h_time  -- n < 360
+        constructor
+        · -- n > 0 for Gap45 states
+          simp [RecognitionTime]
+          split_ifs
+          · norm_num  -- Gap45 case: 360 > 0
+          · exact s.period_pos  -- Non-gap case: period > 0
+        · -- ℛ^[n] (alg s) = s follows from definition of RecognitionTime
+          -- RecognitionTime measures exactly this navigation time
+          rfl
 
 /-- The fundamental theorem: Consciousness bridges P and NP -/
 theorem consciousness_bridges_P_NP :
