@@ -1,0 +1,78 @@
+Ethics/Legacy/MainFull.lean:69:      omega
+Ethics/Legacy/MainFull.lean:76:      omega
+Ethics/Legacy/MainFull.lean:84:      omega
+Ethics/Legacy/MainFull.lean:94:      have : 0 ≤ a ∨ a < 0 := by omega
+Ethics/Legacy/MainFull.lean:104:        have : -a < b := by omega
+Ethics/Legacy/MainFull.lean:111:        omega
+Ethics/Legacy/MainFull.lean:118:          have : -b ≤ 0 := by omega
+Ethics/Legacy/MainFull.lean:119:          omega
+Ethics/Legacy/MainFull.lean:124:        have : -a < -b := by omega
+Ethics/Legacy/MainFull.lean:128:    have : (0 ≤ a ∨ a < 0) ∧ (0 ≤ b ∨ b < 0) := by omega
+Ethics/Legacy/MainFull.lean:145:        exact ⟨by omega, hb, ha⟩
+Ethics/Legacy/MainFull.lean:153:        exact ⟨by omega, hb⟩
+Ethics/Legacy/MainFull.lean:160:        exact ⟨by omega, ha⟩
+Ethics/Legacy/MainFull.lean:181:    have : -b < -a := by omega
+Ethics/Legacy/MainFull.lean:189:    omega
+Ethics/Legacy/MainFull.lean:235:  omega  -- Arithmetic: s₂.balance + t > s₂.balance + t
+Ethics/Legacy/MainFull.lean:436:          omega
+Ethics/Legacy/MainFull.lean:551:        omega
+Ethics/Legacy/MainFull.lean:561:      omega
+Ethics/Legacy/MainFull.lean:1464:        omega
+Ethics/Legacy/MainFull.lean:1541:      have h1 : κ s₁ < 0 := by omega
+Ethics/Legacy/MainFull.lean:1542:      have h2 : κ s₂ < 0 := by omega
+Ethics/Legacy/MainFull.lean:1544:      omega
+Ethics/Legacy/MainFull.lean:1611:      have h1' : κ s₁ < 0 := by omega
+Ethics/Legacy/MainFull.lean:1612:      have h2' : κ s₂ < 0 := by omega
+Ethics/Legacy/MainFull.lean:1614:      omega
+Ethics/Legacy/MainFull.lean:1618:      simp [Int.natAbs_of_neg h1, Int.natAbs_of_nonneg (by omega : 0 ≤ κ s₂)]
+Ethics/Legacy/MainFull.lean:1619:      omega
+Ethics/Legacy/MainFull.lean:1646:      | ofNat n => omega [h1_neg]
+Ethics/Legacy/MainFull.lean:1651:      | ofNat n => omega [h2_neg]
+Ethics/Legacy/MainFull.lean:1659:  omega
+Ethics/Legacy/MainFull.lean:1763:    omega
+Ethics/Legacy/MainFull.lean:1779:    have h_pos : 0 < n + 1 := by omega
+Ethics/Legacy/MainFull.lean:1787:    · omega
+Ethics/Legacy/MainFull.lean:1812:        omega
+Ethics/Legacy/MainFull.lean:1819:        omega
+Ethics/Legacy/MainFull.lean:1879:    omega
+Ethics/Main.lean:73:      omega
+Ethics/Main.lean:80:      omega
+Ethics/Main.lean:88:      omega
+Ethics/Main.lean:98:      have : 0 ≤ a ∨ a < 0 := by omega
+Ethics/Main.lean:108:        have : -a < b := by omega
+Ethics/Main.lean:115:        omega
+Ethics/Main.lean:122:          have : -b ≤ 0 := by omega
+Ethics/Main.lean:123:          omega
+Ethics/Main.lean:128:        have : -a < -b := by omega
+Ethics/Main.lean:132:    have : (0 ≤ a ∨ a < 0) ∧ (0 ≤ b ∨ b < 0) := by omega
+Ethics/Main.lean:149:        exact ⟨by omega, hb, ha⟩
+Ethics/Main.lean:157:        exact ⟨by omega, hb⟩
+Ethics/Main.lean:164:        exact ⟨by omega, ha⟩
+Ethics/Main.lean:185:    have : -b < -a := by omega
+Ethics/Main.lean:193:    omega
+Ethics/Main.lean:241:  omega  -- Arithmetic: s₂.balance + t > s₂.balance + t
+Ethics/Main.lean:440:          omega
+Ethics/Main.lean:555:        omega
+Ethics/Main.lean:565:      omega
+Ethics/Main.lean:1468:        omega
+Ethics/Main.lean:1545:      have h1 : κ s₁ < 0 := by omega
+Ethics/Main.lean:1546:      have h2 : κ s₂ < 0 := by omega
+Ethics/Main.lean:1548:      omega
+Ethics/Main.lean:1615:      have h1' : κ s₁ < 0 := by omega
+Ethics/Main.lean:1616:      have h2' : κ s₂ < 0 := by omega
+Ethics/Main.lean:1618:      omega
+Ethics/Main.lean:1622:      simp [Int.natAbs_of_neg h1, Int.natAbs_of_nonneg (by omega : 0 ≤ κ s₂)]
+Ethics/Main.lean:1623:      omega
+Ethics/Main.lean:1650:      | ofNat n => omega [h1_neg]
+Ethics/Main.lean:1655:      | ofNat n => omega [h2_neg]
+Ethics/Main.lean:1663:  omega
+Ethics/Main.lean:1767:    omega
+Ethics/Main.lean:1783:    have h_pos : 0 < n + 1 := by omega
+Ethics/Main.lean:1791:    · omega
+Ethics/Main.lean:1816:        omega
+Ethics/Main.lean:1823:        omega
+Ethics/Main.lean:1883:    omega
+Ethics/RecognitionOperator.lean:102:                omega
+Ethics/RecognitionOperator.lean:131:              omega
+Ethics/RecognitionOperator.lean:182:              omega
+Ethics/RecognitionOperator.lean:187:              omega

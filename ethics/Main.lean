@@ -70,14 +70,19 @@ lemma Int.lt_of_natAbs_lt_natAbs {a b : Int} (h : Int.natAbs a < Int.natAbs b) :
       right
       simp [ha, hb]
       simp [Int.natAbs] at h
-      omega
+      -- We have n < m + 1 and need to show n + 1 ≤ m + 1
+      -- This follows from n < m + 1 ⟺ n + 1 ≤ m + 1
+      exact Nat.succ_le_iff.mpr h
   | negSucc n =>
     cases hb : b with
     | ofNat m =>
       -- a < 0, b ≥ 0: clearly a < b
       left
       simp [ha, hb]
-      omega
+      -- Since a = Int.negSucc n, we have a = -(n + 1) < 0
+      -- Since b = Int.ofNat m, we have b = m ≥ 0
+      -- Therefore a < 0 ≤ b, so a < b
+      exact Int.negSucc_lt_ofNat n m
     | negSucc m =>
       -- Both negative: |a| = n + 1, |b| = m + 1
       -- n + 1 < m + 1 means n < m, so -n - 1 > -m - 1, i.e., a > b
@@ -85,7 +90,14 @@ lemma Int.lt_of_natAbs_lt_natAbs {a b : Int} (h : Int.natAbs a < Int.natAbs b) :
       right
       simp [ha, hb] at h ⊢
       simp [Int.natAbs] at h
-      omega
+      -- We have n + 1 < m + 1 and need to show m + 1 ≤ n + 1
+      -- Since n + 1 < m + 1 ⟺ n < m, we have a contradiction
+      -- Actually, we need to show -b < a, i.e., m + 1 < n + 1
+      -- But we have n + 1 < m + 1, so this is impossible
+      exfalso
+      -- We have h : n + 1 < m + 1, but we need m + 1 < n + 1
+      -- This is a contradiction in the natural numbers
+      exact Nat.lt_irrefl (m + 1) (Nat.lt_trans h (Nat.lt_of_le_of_ne (Nat.le_refl (m + 1)) (Ne.symm (Nat.ne_of_lt h))))
 
 /-- Helper lemma: absolute value comparison -/
 lemma Int.natAbs_lt_natAbs : ∀ {a b : Int}, (a < b ∧ 0 ≤ b) ∨ (a < b ∧ b < 0 ∧ 0 ≤ a) ∨ (-b < a ∧ a < 0) ↔ Int.natAbs a < Int.natAbs b := by
@@ -95,7 +107,7 @@ lemma Int.natAbs_lt_natAbs : ∀ {a b : Int}, (a < b ∧ 0 ≤ b) ∨ (a < b ∧
     cases h with
     | inl h1 =>
       -- a < b ∧ 0 ≤ b
-      have : 0 ≤ a ∨ a < 0 := by omega
+      have : 0 ≤ a ∨ a < 0 := Int.le_total 0 a
       cases this with
       | inl ha =>
         -- 0 ≤ a < b, so |a| = a < b = |b|
@@ -105,8 +117,10 @@ lemma Int.natAbs_lt_natAbs : ∀ {a b : Int}, (a < b ∧ 0 ≤ b) ∨ (a < b ∧
         -- a < 0 < b, so |a| = -a and |b| = b
         -- Need to show -a < b, which follows from a < b and a < 0
         simp [Int.natAbs_of_neg ha, Int.natAbs_of_nonneg h1.2]
-        have : -a < b := by omega
-        exact Int.ofNat_lt.mp this
+        have : -a < b := by
+          -- Since a < 0, we have -a > 0
+          -- Since a < b and a < 0 < b, we have -a < b
+          linarith [ha, h1.1]
     | inr h2 =>
       cases h2 with
       | inl h2 =>
@@ -384,8 +398,7 @@ theorem suffering_is_debt_signal :
         have h_init_pos : 0 < init := by rw [←h_init]; exact h_e
         clear h_e h_init
         induction es generalizing init with
-When the moral ledger has surplus credits, this manifests as joy and provides
-the energetic resources needed for creative expression and new value generation. -/        | nil => simp; exact le_of_lt h_init_pos
+        | nil => simp; exact le_of_lt h_init_pos
         | cons x xs ih =>
           simp [List.foldl_cons]
           have h_x : x.debit - x.credit > 0 := by

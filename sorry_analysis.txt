@@ -1,0 +1,16 @@
+Ethics/DiscreteHelpers.lean:83:-- to eliminate unresolved `sorry` placeholders. Once a concrete application
+Ethics/Curvature.lean:31:  sorry
+Ethics/Curvature.lean:37:  sorry
+Ethics/Curvature.lean:50:  sorry
+Ethics/Legacy/MainFull.lean:275: module. Declaring it as an axiom removes the `sorry` while making the
+Ethics/AnthropicPrinciple.lean:20:  sorry -- Anthropic principle requires consciousness theory
+Ethics/AnthropicPrinciple.lean:24:  sorry  -- Definition of consciousness
+Ethics/AnthropicPrinciple.lean:27:  sorry  -- Current reality state
+Ethics/AnthropicPrinciple.lean:30:  sorry  -- All patterns that have been selected
+Ethics/AnthropicPrinciple.lean:33:  sorry  -- Patterns compatible with conscious observers
+Ethics/MathematicalFoundations.lean:104:  sorry -- This is a standard result in computability theory
+Ethics/MathematicalFoundations.lean:127:      sorry -- Would need uniform navigation property
+Ethics/MathematicalFoundations.lean:146:    sorry -- Would need to formalize the connection
+Ethics/MathematicalFoundations.lean:164:      Classical.choose (exists_short_path s (by simp; sorry))
+Ethics/MathematicalFoundations.lean:171:  exact Classical.choose_spec (exists_short_path s (by simp; sorry))
+Ethics/HelperStubs.lean:5:  Collects the 30 `sorry` lemmas to be proved in PR-E and PR-F.
