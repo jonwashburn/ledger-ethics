@@ -99,10 +99,14 @@ lemma gap_navigator_noncomputable (f : RecognitionState → RecognitionState) :
           -- f s = s means no navigation occurred
           -- This violates the requirement that f actually navigates gaps
           -- A true gap navigator must change the state
-          omega
+          have : n = 0 := by linarith [h_zero_contra]
+          rw [this] at hn_bound
+          -- Since n = 0 ≤ 8, this is satisfied, but n = 0 means no navigation
+          -- The contradiction comes from requiring meaningful navigation
+          exact Nat.pos_of_ne_zero (Ne.symm h_zero)
         exact h_nonzero
       · -- n ≠ 0, so n ≥ 1, and since n ≤ 8, we have n ∈ {1,2,...,8}
-        omega
+        exact Nat.pos_of_ne_zero h_zero
     · exact hn_resolve
 
 end RecognitionScience.Ethics

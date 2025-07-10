@@ -1,5 +1,7 @@
 # Recognition Science Ethics Framework
 
+[![CI](https://github.com/jonwashburn/ledger-ethics/workflows/CI/badge.svg)](https://github.com/jonwashburn/ledger-ethics/actions)
+
 A mathematically rigorous approach to ethics based on ledger balance and Recognition Science principles.
 
 ## Overview

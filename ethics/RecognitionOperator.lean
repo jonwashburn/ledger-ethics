@@ -193,8 +193,19 @@ lemma recognition_returns (s : RecognitionState) (h : ¬Gap45 s) :
         · simp [Function.iterate_fixed, RecognitionOperator]
         · simp [Function.iterate_fixed, RecognitionOperator]
 
-/-- Key property: Recognition preserves unitarity (simplified) -/
-axiom recognition_unitary : ∀ s : RecognitionState,
-  s.amplitude^2 = (ℛ s).amplitude^2
+/-!
+# Unitary Evolution from Core Ledger Model
+-/
+
+/-- Recognition preserves amplitude by construction (follows from unitary evolution axiom) -/
+theorem recognition_preserves_amplitude (s : RecognitionState) :
+  (ℛ s).amplitude = s.amplitude := by
+  simp [RecognitionOperator]
+
+/-- Recognition unitarity: follows directly from amplitude preservation -/
+theorem recognition_unitary : ∀ s : RecognitionState,
+  s.amplitude^2 = (ℛ s).amplitude^2 := by
+  intro s
+  rw [recognition_preserves_amplitude]
 
 end RecognitionScience.Ethics
