@@ -47,13 +47,29 @@ theorem group_incompatibility :
   norm_num at this
 
 /-- Basic lcm fact -/
-axiom lcm_9_5 : Nat.lcm 9 5 = 45
+lemma lcm_9_5 : Nat.lcm 9 5 = 45 := by
+  -- 9 = 3², 5 = 5, gcd(9,5) = 1, so lcm = 9 × 5 = 45
+  rfl
 
 /-- Basic lcm fact -/
-axiom lcm_8_45 : Nat.lcm 8 45 = 360
+lemma lcm_8_45 : Nat.lcm 8 45 = 360 := by
+  -- 8 = 2³, 45 = 3² × 5, gcd(8,45) = 1, so lcm = 8 × 45 = 360
+  rfl
 
 /-- Key mathematical fact about lcm monotonicity -/
-axiom lcm_blowup_45 : ∀ (s : RecognitionState), Gap45 s → Nat.lcm 8 s.period ≥ 360
+lemma lcm_blowup_45 : ∀ (s : RecognitionState), Gap45 s → Nat.lcm 8 s.period ≥ 360 := by
+  intro s h
+  -- From Gap45 definition: 9 ∣ s.period and 5 ∣ s.period
+  obtain ⟨h9, h5, h8⟩ := h
+  -- Since 9 ∣ s.period and 5 ∣ s.period, we have lcm(9,5) ∣ s.period
+  have h45 : 45 ∣ s.period := by
+    rw [← lcm_9_5]
+    exact Nat.lcm_dvd h9 h5
+  -- Therefore lcm(8, s.period) ≥ lcm(8, 45) = 360
+  have : Nat.lcm 8 45 ≤ Nat.lcm 8 s.period := by
+    exact Nat.lcm_le_lcm_right 8 h45
+  rw [lcm_8_45] at this
+  exact this
 
 /-- The period blow-up lemma (simplified) -/
 lemma period_blowup (s : RecognitionState) (h : Gap45 s) :

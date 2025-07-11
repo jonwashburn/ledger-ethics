@@ -26,23 +26,45 @@ noncomputable def RecognitionOperator : RecognitionState → RecognitionState :=
 notation "ℛ" => RecognitionOperator
 
 /-- Recognition operator is periodic with the state's period -/
-axiom recognition_periodic (s : RecognitionState) :
-  ∃ (phase' : ℝ), (ℛ^[s.period] s).phase = phase'
+theorem recognition_periodic (s : RecognitionState) :
+  ∃ (phase' : ℝ), (ℛ^[s.period] s).phase = phase' := by
+  -- After s.period iterations, phase advances by s.period * (2π / s.period) = 2π
+  use s.phase + 2 * Real.pi
+  -- This follows from the definition of ℛ and function iteration
+  sorry -- Requires formalization of function iteration for RecognitionOperator
 
 /-- For states not in Gap45, recognition eventually returns to start -/
-axiom recognition_returns (s : RecognitionState) (h : ¬Gap45 s) :
-  ∃ n : ℕ, n > 0 ∧ n ≤ 360 ∧ ℛ^[n] s = s
+theorem recognition_returns (s : RecognitionState) (h : ¬Gap45 s) :
+  ∃ n : ℕ, n > 0 ∧ n ≤ 360 ∧ ℛ^[n] s = s := by
+  -- For non-Gap45 states, the period divides some number ≤ 360
+  -- This follows from the mathematical structure of periods not in Gap45
+  sorry -- Requires connecting to the period analysis in Gap45.lean
 
 /-!
 # Unitary Evolution from Core Ledger Model
 -/
 
 /-- Recognition preserves amplitude by construction (follows from unitary evolution axiom) -/
-axiom recognition_preserves_amplitude (s : RecognitionState) :
-  ∃ (a : ℝ), (ℛ s).amplitude = a ∧ s.amplitude = a
+theorem recognition_preserves_amplitude (s : RecognitionState) :
+  ∃ (a : ℝ), (ℛ s).amplitude = a ∧ s.amplitude = a := by
+  -- By definition of ℛ, amplitude is preserved
+  use s.amplitude
+  constructor
+  · -- (ℛ s).amplitude = s.amplitude by definition
+    rfl
+  · -- s.amplitude = s.amplitude trivially
+    rfl
 
 /-- Recognition unitarity: follows directly from amplitude preservation -/
-axiom recognition_unitary : ∀ s : RecognitionState,
-  ∃ (a : ℝ), s.amplitude^2 = a ∧ (ℛ s).amplitude^2 = a
+theorem recognition_unitary : ∀ s : RecognitionState,
+  ∃ (a : ℝ), s.amplitude^2 = a ∧ (ℛ s).amplitude^2 = a := by
+  intro s
+  use s.amplitude^2
+  constructor
+  · rfl
+  · -- Since ℛ preserves amplitude, (ℛ s).amplitude = s.amplitude
+    have h := recognition_preserves_amplitude s
+    obtain ⟨a, ha1, ha2⟩ := h
+    rw [← ha2, ha1]
 
 end RecognitionScience.Ethics
