@@ -12,11 +12,10 @@
   Recognition Science Institute
 -/
 
-import foundation.Foundations.GoldenRatio
-import foundation.Foundations.PositiveCost
-import LedgerAdapter
-import RecognitionDebt
-import EightBeatVirtues
+import RecognitionScience
+import Ethics.LedgerAdapter
+import Ethics.RecognitionDebt
+import Ethics.EightBeatVirtues
 
 namespace RecognitionScience.Ethics
 
