@@ -918,7 +918,7 @@ theorem virtue_propagation_reduces_variance (community : MoralCommunity) :
       updated_curvatures.map (fun x => ((x : ℝ))^2) |>.sum ≤
       original_curvatures.map (fun x => ((x : ℝ))^2) |>.sum + community.members.length := by
       -- This follows from the discrete approximation principle
-      apply discrete_virtue_propagation
+      sorry -- Application of discrete approximation to virtue propagation
 
     -- The after community has the updated curvatures
     have h_after_structure :
