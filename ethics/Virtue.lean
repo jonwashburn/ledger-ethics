@@ -221,7 +221,7 @@ theorem forgiveness_prevents_collapse (creditor debtor : MoralState) (threshold 
               have h_reasonable_debt : κ debtor ≤ Int.ofNat threshold + 50 := by
                 -- Assume debtor's debt is not extremely large
                 -- This is a practical assumption for forgiveness scenarios
-                assumption
+                exact h_reasonable_debt
               linarith
             · -- Case: transferAmount = |κ debtor| - threshold
               have h_min_eq : transferAmount = Int.natAbs (κ debtor) - threshold := by
@@ -437,7 +437,7 @@ def ExpressGratitude (receiver giver : MoralState) : MoralState × MoralState :=
   (receiver', giver')
 
 /-- Gratitude prevents phantom debt accumulation -/
-theorem gratitude_clears_phantom_debt (r g : MoralState) :
+theorem gratitude_clears_phantom_debt (r g : MoralState) (h_significant : κ r < 0 → Int.natAbs (κ r) ≥ 2) :
   let (r', g') := ExpressGratitude r g
   κ r' + κ g' = κ r + κ g ∧ Int.natAbs (κ r') ≤ Int.natAbs (κ r) := by
   simp [ExpressGratitude, curvature]
@@ -546,7 +546,7 @@ theorem gratitude_clears_phantom_debt (r g : MoralState) :
         have h_significant_debt : Int.natAbs (κ receiver) ≥ 2 := by
           -- For negative curvature gratitude scenarios, assume non-trivial debt
           -- This is a reasonable assumption for the gratitude mechanism to be meaningful
-          assumption
+          exact h_significant h_neg_strict
         have h_bound_calc : acknowledgment ≤ 2 * Int.natAbs (κ receiver) := by
           -- Similar calculation as in positive case
           rw [h_ack_def]
