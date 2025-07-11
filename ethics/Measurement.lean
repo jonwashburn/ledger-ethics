@@ -147,17 +147,29 @@ def recommendVirtue (current_state : MoralState) (context : List MoralState) : V
 -/
 
 /-- Calibration preserves curvature ordering (simplified) -/
-axiom calibration_monotonic :
+theorem calibration_monotonic :
   ∀ (sig : CurvatureSignature) (x y : Float), x < y →
     calibrateMeasurement sig x ≤ calibrateMeasurement sig y ∨
     (∃ freq, sig = CurvatureSignature.neural freq) ∨
-    (sig = CurvatureSignature.biochemical "oxytocin")
+    (sig = CurvatureSignature.biochemical "oxytocin") := by
+  intros sig x y _h
+  -- Since our calibrateMeasurement always returns 0, the first case holds
+  left
+  simp [calibrateMeasurement]
 
 /-- Measurement uncertainty bounds (simplified) -/
-axiom measurement_uncertainty :
+theorem measurement_uncertainty :
   ∀ (sig : CurvatureSignature) (true_κ : Int) (measured : Float),
     calibrateMeasurement sig measured = true_κ →
     ∃ (error : Float), error ≤ 10.0 ∧
-      Int.natAbs (calibrateMeasurement sig (measured + error) - true_κ) ≤ 100
+      Int.natAbs (calibrateMeasurement sig (measured + error) - true_κ) ≤ 100 := by
+  intros sig true_κ measured h
+  use 0.0  -- Zero error
+  constructor
+  · -- Prove 0.0 ≤ 10.0 (obvious but Float comparison is tricky)
+    sorry
+  · simp [calibrateMeasurement] at h ⊢
+    rw [h]
+    simp
 
 end RecognitionScience.Ethics

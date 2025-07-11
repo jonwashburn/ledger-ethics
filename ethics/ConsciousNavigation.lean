@@ -21,9 +21,9 @@ axiom exists_short_path (s : RecognitionState) (h : Gap45 s) :
 /-- Convert RecognitionState to MoralState for compatibility -/
 noncomputable def toMoralState (s : RecognitionState) : MoralState :=
   { ledger := { entries := [], debits := 0, credits := 0, balance := 0 },  -- Simplified
-    energy := { cost := 350.0 },  -- Ensure > 300
-    valid := sorry,  -- Obviously 350.0 > 0
-    energy_sufficient := sorry }  -- Obviously 350.0 > 300
+    energy := MoralState.zero.energy,  -- Use the proven-positive energy from zero state
+    valid := MoralState.zero.valid,
+    energy_sufficient := MoralState.zero.energy_sufficient }
 
 /-- The conscious choice function for MoralState (non-computable) -/
 noncomputable def consciousChoiceMoral : MoralState → MoralState :=
