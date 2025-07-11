@@ -166,8 +166,8 @@ theorem measurement_uncertainty :
   intros sig true_κ measured h
   use 0.0  -- Zero error
   constructor
-  · -- Prove 0.0 ≤ 10.0 (obvious but Float comparison is tricky)
-    sorry
+  · -- Prove 0.0 ≤ 10.0 using native_decide
+    native_decide
   · simp [calibrateMeasurement] at h ⊢
     rw [h]
     simp
