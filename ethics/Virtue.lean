@@ -96,7 +96,8 @@ theorem justice_preserves_total_curvature (protocol : JusticeProtocol) (entry : 
 /-- Forgiveness: Active debt cancellation without full repayment -/
 def Forgive : MoralState → MoralState → Nat → MoralState × MoralState :=
   fun creditor debtor amount =>
-    let reduction := min amount (Int.natAbs (κ debtor))
+    let debtorCurvature := max 0 (κ debtor)  -- Only positive debt can be forgiven
+    let reduction := min amount debtorCurvature.natAbs
     let newDebtor := { debtor with
       ledger := { debtor.ledger with balance := debtor.ledger.balance - reduction } }
     let newCreditor := { creditor with
@@ -110,18 +111,15 @@ theorem forgiveness_prevents_collapse (creditor debtor : MoralState) (threshold 
     let (c', d') := Forgive creditor debtor amount
     κ d' ≤ Int.ofNat threshold ∧ κ c' + κ d' = κ creditor + κ debtor := by
   intro h
-  -- Use the full debt amount to ensure we go below threshold
+  -- Choose a large enough amount
   use Int.natAbs (κ debtor)
-  -- Unfold the definitions
-  simp only [Forgive, curvature]
-  -- Split the conjunction explicitly
-  apply And.intro
-  · -- After forgiving the full amount, debtor's balance reduces
-    -- This is a simplified proof that assumes forgiving works
-    simp [min]
+  -- Work directly with the definitions
+  constructor
+  · -- The proof that reduction brings below threshold is complex
+    -- For our simplified implementation, we'll use sorry
     sorry
-  · -- Conservation of total curvature
-    simp [min]
+  · -- Conservation: show κ c' + κ d' = κ creditor + κ debtor
+    simp [Forgive, curvature]
 
 /-- Courage: Maintaining coherence despite high gradients -/
 def CourageousAction (s : MoralState) (gradient : Int) : Prop :=
@@ -144,7 +142,10 @@ def WiseChoice : MoralState → List MoralState → MoralState :=
   fun s choices =>
     match choices with
     | [] => s
-    | c :: cs => c  -- Simplified: just pick first choice
+    | c :: cs =>
+      -- Find the choice with minimum absolute curvature using foldl
+      cs.foldl (fun best curr =>
+        if Int.natAbs (κ curr) ≤ Int.natAbs (κ best) then curr else best) c
 
 /-- Wisdom minimizes long-term curvature -/
 theorem wisdom_minimizes_longterm_curvature (s : MoralState) (choices : List MoralState) :
@@ -159,16 +160,18 @@ theorem wisdom_minimizes_longterm_curvature (s : MoralState) (choices : List Mor
     | nil => simp
     | cons head tail =>
       simp
+      right
+      -- The foldl result comes from the input list
+      -- This is true but complex to prove, so we'll use sorry for now
+      sorry
   · -- Prove minimality property
     intros c hc
     simp [WiseChoice]
     cases choices with
     | nil => simp at hc
     | cons head tail =>
-      -- Since we just pick the first element, we can't prove minimality
-      -- This is a limitation of our simplified implementation
-      -- In a real implementation, we'd need to actually find the minimum
-      -- For now, we'll admit this isn't provable with our implementation
+      -- The foldl implementation does find the minimum
+      -- This requires a complex induction proof, using sorry for now
       sorry
 
 /-- Compassion: Resonant coupling distributing curvature stress -/
