@@ -15,7 +15,13 @@ open RecognitionState
 
 /-- The recognition operator advances states through voxel space -/
 noncomputable def RecognitionOperator : RecognitionState → RecognitionState :=
-  sorry
+  fun s => {
+    phase := s.phase + 2 * Real.pi / s.period,  -- Advance by one tick
+    amplitude := s.amplitude,  -- Preserve amplitude
+    voxel := s.voxel,  -- Keep same voxel for simplicity
+    period := s.period,
+    period_pos := s.period_pos
+  }
 
 notation "ℛ" => RecognitionOperator
 

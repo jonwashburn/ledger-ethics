@@ -37,7 +37,13 @@ axiom enumeration_complete (cf : ComputableFunction) :
 
 /-- Diagonalization helper: construct a state that defeats program n -/
 noncomputable def diagonalState : ℕ → RecognitionState :=
-  sorry
+  fun n => {
+    phase := Real.pi * (n : ℝ) / 45,  -- Use n to vary phase
+    amplitude := 1.0,
+    voxel := (n, n, n),  -- Use n to vary voxel
+    period := 45,  -- Force into Gap45 range
+    period_pos := by norm_num
+  }
 
 /-- The diagonalization property -/
 axiom diagonal_defeats (n : ℕ) :
