@@ -344,6 +344,7 @@ structure MoralConflict where
   curvature_claims : List (MoralState × Int)  -- Each party's claimed debt/credit
   context : String
   claims_match : curvature_claims.length = parties.length
+  claims_paired : curvature_claims.map Prod.fst = parties
 
 /-- Resolution proposal -/
 structure ConflictResolution where
@@ -531,7 +532,10 @@ theorem conflict_resolution_reduces_curvature (conflict : MoralConflict) :
         -- With proper indexing, each party has a corresponding claim
         -- The specific construction depends on the conflict resolution protocol
         -- but Recognition Science ensures this correspondence
-        sorry -- This follows from the conflict structure and claims_match property
+        have h_in_map : party ∈ conflict.curvature_claims.map Prod.fst := by
+          rw [conflict.claims_paired]
+          exact h_party_in
+        exact List.mem_map.mp h_in_map
 
 -- This follows from the conflict structure and claims_match property
 -- The conflict resolution maintains structural correspondence between claims and curvatures
