@@ -8,6 +8,7 @@
 
 import Ethics.Gap45
 import Mathlib.Data.Real.Basic
+import Foundations.UnitaryEvolution  -- From ledger-foundation integration
 
 namespace RecognitionScience.Ethics
 
@@ -55,16 +56,12 @@ theorem recognition_preserves_amplitude (s : RecognitionState) :
   · -- s.amplitude = s.amplitude trivially
     rfl
 
-/-- Recognition unitarity: follows directly from amplitude preservation -/
 theorem recognition_unitary : ∀ s : RecognitionState,
-  ∃ (a : ℝ), s.amplitude^2 = a ∧ (ℛ s).amplitude^2 = a := by
+  s.amplitude^2 = (ℛ s).amplitude^2 := by
   intro s
-  use s.amplitude^2
-  constructor
-  · rfl
-  · -- Since ℛ preserves amplitude, (ℛ s).amplitude = s.amplitude
-    have h := recognition_preserves_amplitude s
-    obtain ⟨a, ha1, ha2⟩ := h
-    rw [← ha2, ha1]
+  -- Use unitary_tick_lemma from foundation
+  have h_unitary := unitary_tick_lemma s
+  simp [RecognitionOperator, amplitude] at h_unitary
+  exact h_unitary
 
 end RecognitionScience.Ethics

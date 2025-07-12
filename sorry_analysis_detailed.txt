@@ -1,0 +1,48 @@
+=== ./Applications.lean ===
+       4
+162:        sorry -- This follows from the minimization property of foldl
+171:        sorry -- This follows from induction and minimization preservation
+435:        sorry -- This follows from the conflict structure and claims_match property
+437:      sorry -- This follows from the structural correspondence between claims and curvatures
+=== ./DiscreteHelpers.lean ===
+       1
+84:-- to eliminate unresolved `sorry` placeholders. Once a concrete application
+=== ./ExtendedLedger.lean ===
+       2
+792:                      sorry -- Detailed proof requires virtue cycle analysis from Virtue.lean
+903:                        sorry -- This bounds M * φ^(-1) by the structure of balanced ledgers
+=== ./HelperStubs.lean ===
+       1
+5:  Collects the 30 `sorry` lemmas to be proved in PR-E and PR-F.
+=== ./Main.lean ===
+       2
+609:        sorry -- REQUIRES: Formal definition of system evolution operator
+620:      sorry -- Definitional: follows from h_ethical
+=== ./Virtue.lean ===
+       5
+660:          sorry -- Assumption: gratitude applies to significant debts
+990:    sorry -- Standard variance reduction principle
+1006:    sorry -- Discrete approximation error bounded by community size
+1019:      sorry -- Reasonable coupling assumption for virtue propagation
+1032:      sorry -- Application of discrete approximation to virtue propagation
+=== ./backup_root_duplicates/DiscreteHelpers.lean ===
+       1
+83:-- to eliminate unresolved `sorry` placeholders. Once a concrete application
+=== ./ethics/Computability.lean ===
+       3
+35:  sorry -- Requires formal theory of computable functions on periods
+49:  sorry -- Requires connecting to Mathlib's computability theory
+86:      sorry -- Requires proving the diagonal function differs from all enumerated functions
+=== ./ethics/ConsciousNavigation.lean ===
+       1
+94:        sorry -- Would require full computability theory development
+=== ./ethics/DiscreteHelpers.lean ===
+       1
+83:-- to eliminate unresolved `sorry` placeholders. Once a concrete application
+=== ./ethics/HelperStubs.lean ===
+       1
+5:  Collects the 30 `sorry` lemmas to be proved in PR-E and PR-F.
+=== ./ethics/RecognitionOperator.lean ===
+       2
+35:  sorry -- Requires formalization of function iteration for RecognitionOperator
+42:  sorry -- Requires connecting to the period analysis in Gap45.lean

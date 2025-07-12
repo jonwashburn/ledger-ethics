@@ -77,9 +77,16 @@ variable (s : LedgerState) (e : Entry)
       -- In a complete system, Entry would have bounds ensuring this property
       -- For now, we assume it as a physical constraint
       have h_physical : Float.ofNat (n + 1) < ms.energy.cost := by
-        -- This represents the assumption that the system is well-formed
-        -- In practice, this would be enforced by entry validation
-        sorry
+        -- |credit - debit| ≤ 200 by entry bounds
+        have h_bound : n + 1 ≤ 200 := by
+          -- max |credit| + max |debit| = 200
+          simp [h_sign]
+          have h_credit : Int.natAbs e.credit ≤ 100 := e.credit_bounded
+          have h_debit : Int.natAbs e.debit ≤ 100 := e.debit_bounded
+          -- For negSucc, n + 1 = |credit - debit| ≤ |credit| + |debit| ≤ 200
+          simp [Int.natAbs_sub_le (ofInt e.credit) (ofInt e.debit)]
+          linarith
+        exact lt_of_le_of_lt (Float.ofNat_le_ofNat.mpr h_bound) ms.energy_sufficient
       linarith
 
   -- Construct the new moral state

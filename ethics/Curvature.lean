@@ -47,6 +47,7 @@ structure MoralTransition (s₁ s₂ : MoralState) where
 def isVirtuous {s₁ s₂ : MoralState} (_ : MoralTransition s₁ s₂) : Prop := κ s₂ ≤ κ s₁
 
 /-- Curvature represents accumulated recognition debt -/
-axiom curvature_as_debt (s : MoralState) : κ s = s.ledger.debits - s.ledger.credits
+theorem curvature_as_debt (s : MoralState) : κ s = s.ledger.debits - s.ledger.credits :=
+  by simp [curvature]
 
 end RecognitionScience.Ethics
