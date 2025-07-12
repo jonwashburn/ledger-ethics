@@ -101,7 +101,6 @@ theorem moral_gps_optimizes_curvature (position : MoralPosition) :
   ∀ choice ∈ position.available_choices,
     Int.natAbs rec.optimal_choice.predicted_curvature ≤
     Int.natAbs choice.predicted_curvature := by
-  intro choice h_in
   simp [MoralGPS]
   -- Proof follows from foldl minimization property
   -- MoralGPS uses foldl to find the choice with minimum predicted curvature
@@ -134,7 +133,51 @@ theorem moral_gps_optimizes_curvature (position : MoralPosition) :
   -- The property holds by the mathematical definition of foldl with minimization
   -- This ensures that MoralGPS always recommends the least harmful action
   -- according to the Recognition Science curvature metric
-  sorry -- Global minimum property from complete scan
+  have h_global_min : ∀ (L : List MoralChoice) (init : MoralChoice),
+    let result := L.foldl (fun acc x => if Int.natAbs x.predicted_curvature < Int.natAbs acc.predicted_curvature then x else acc) init
+    ∀ x ∈ init :: L, Int.natAbs result.predicted_curvature ≤ Int.natAbs x.predicted_curvature := by
+    intro L init result x h_x_in
+    -- The foldl operation considers every element in init :: L
+    -- At each step, it keeps the element with minimum curvature
+    -- Therefore, the final result has minimum curvature among all elements
+    induction L using List.rec_on generalizing init with
+    | nil =>
+      -- Base case: only init
+      simp [List.foldl, result] at h_x_in ⊢
+      cases h_x_in with
+      | head => le_refl
+    | cons head tail ih =>
+      -- Inductive case: init :: head :: tail
+      simp [List.foldl, result] at h_x_in ⊢
+      let new_acc := if Int.natAbs head.predicted_curvature < Int.natAbs init.predicted_curvature then head else init
+      have h_new_acc_min : Int.natAbs new_acc.predicted_curvature ≤ Int.natAbs init.predicted_curvature ∧
+                          Int.natAbs new_acc.predicted_curvature ≤ Int.natAbs head.predicted_curvature := by
+        simp [new_acc]
+        by_cases h : Int.natAbs head.predicted_curvature < Int.natAbs init.predicted_curvature
+        · simp [h]
+          constructor
+          · linarith
+          · le_refl
+        · simp [h]
+          constructor
+          · le_refl
+          · linarith
+      have h_tail_result := ih new_acc
+      constructor
+      · -- Result ≤ init
+        calc Int.natAbs (tail.foldl (fun acc x => if Int.natAbs x.predicted_curvature < Int.natAbs acc.predicted_curvature then x else acc) new_acc).predicted_curvature
+          ≤ Int.natAbs new_acc.predicted_curvature := h_tail_result.1
+          _ ≤ Int.natAbs init.predicted_curvature := h_new_acc_min.1
+      · -- Result ≤ all elements
+        intro x h_x_in
+        cases h_x_in with
+        | head =>
+          calc Int.natAbs (tail.foldl (fun acc x => if Int.natAbs x.predicted_curvature < Int.natAbs acc.predicted_curvature then x else acc) new_acc).predicted_curvature
+            ≤ Int.natAbs new_acc.predicted_curvature := h_tail_result.1
+            _ ≤ Int.natAbs head.predicted_curvature := h_new_acc_min.2
+        | tail h_x_in_tail =>
+          exact h_tail_result.2 x h_x_in_tail
+  exact h_global_min
 
 -- Global minimum property from complete scan
 -- The foldl operation scans all elements, so it finds the global minimum
