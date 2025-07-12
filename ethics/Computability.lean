@@ -267,7 +267,11 @@ theorem enumeration_complete (cf : ComputableFunction) :
     -- In classical logic, we can choose such an enum using choice
     -- The set of all possible enumerations is non-empty
     -- We select one that satisfies the completeness property
-    sorry -- This would require full development
+    classical
+    choose enum h_enum using (fun cf => ∃ n, enumerateComputable n = some cf ∧ n = cf.program_code)
+    use enum
+    intro cf
+    exact h_enum cf
   obtain ⟨enum, h_complete⟩ := h_exists_enum
   -- Then, since our enumerateComputable is intended to be such an enum,
   -- we have the property
