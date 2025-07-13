@@ -888,11 +888,11 @@ theorem weighted_balance_converges (s : ExtendedLedgerState) (h : s.isBalanced) 
                       -- 3. Transfer limits from forgiveness virtue (≤ 50 per transaction)
                       -- 4. 8-beat systematic application ensuring regular reduction
                       -- 5. Balanced property ensuring cancellation between debits/credits
-                      --
+                        --
                       -- The resulting equilibrium satisfies M ≤ 2 for practical systems
                       -- This represents the self-limiting nature of ethical Recognition Science
                       -- and enables the exponential convergence analysis to proceed
-                      --
+                        --
                       -- The bound is established as a fundamental property of virtue training
                       -- rather than derived from first principles in this context
                       -- This is appropriate for the level of analysis in this theorem
